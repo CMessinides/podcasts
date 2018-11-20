@@ -12,56 +12,43 @@ async function fetchAPIData(endpoint, params, fetch) {
   try {
     var response = await fetch(url);
   } catch (error) {
-    return {
-      error: new Error(
-        "iTunes service encountered network error: " + error.message
-      ),
-      data: null
-    };
+    throw new Error(
+      "iTunes service encountered network error: " + error.message
+    );
   }
 
   if (!response.ok) {
-    return {
-      error: new Error(
-        `iTunes service encountered HTTP error: Status ${response.status} - ${
-          response.statusText
-        }`
-      ),
-      data: null
-    };
+    throw new Error(
+      `iTunes service encountered HTTP error: Status ${response.status} - ${
+        response.statusText
+      }`
+    );
   }
 
-  return {
-    error: null,
-    data: await response.json()
-  };
+  return await response.json();
 }
 
-export function createPodcastList(iTunesData) {
-  return iTunesData.results.map(
-    result =>
-      new Podcast({
-        iTunesID: result.collectionId,
-        name: result.collectionName,
-        feedURL: result.feedURL,
-        thumbnailURLs: {
-          "30": result.artworkUrl30,
-          "60": result.artworkUrl60,
-          "100": result.artworkUrl100,
-          "600": result.artworkUrl600
-        }
-      })
-  );
+export function translatePodcast(result) {
+  if (result === undefined) return null;
+  return new Podcast({
+    iTunesID: result.collectionId,
+    name: result.collectionName,
+    feedURL: result.feedUrl,
+    thumbnailURLs: {
+      "30": result.artworkUrl30,
+      "60": result.artworkUrl60,
+      "100": result.artworkUrl100,
+      "600": result.artworkUrl600
+    }
+  });
 }
 
-export function createAuthorList(iTunesData) {
-  return iTunesData.results.map(
-    result =>
-      new Author({
-        iTunesID: result.artistID,
-        name: result.artistName
-      })
-  );
+export function translateAuthor(result) {
+  if (result === undefined) return null;
+  return new Author({
+    iTunesID: result.artistId,
+    name: result.artistName
+  });
 }
 
 export default class ITunesService {
@@ -74,52 +61,56 @@ export default class ITunesService {
   async searchPodcasts(params = {}) {
     // if no term provided, return early with error
     if (params.term === undefined) {
-      return {
-        error: new Error("No term provided for the iTunes Search API"),
-        podcasts: []
-      };
+      throw new Error("No term provided for the iTunes Search API");
     }
 
     // force a podcast-only search
     params.media = "podcast";
     params.entity = "podcast";
 
-    const { data, error } = await fetchAPIData(
-      this.searchEndpoint,
-      params,
-      this.fetch
-    );
-    if (error) return { error, podcasts: [] };
+    const data = await fetchAPIData(this.searchEndpoint, params, this.fetch);
 
-    return {
-      error: null,
-      podcasts: createPodcastList(data)
-    };
+    return data.results.map(r => translatePodcast(r));
   }
 
   async searchAuthors(params = {}) {
     // if no term provided, return early with error
     if (params.term === undefined) {
-      return {
-        error: new Error("No term provided for the iTunes Search API"),
-        authors: []
-      };
+      throw new Error("No term provided for the iTunes Search API");
     }
 
     // force a author-only search
     params.media = "podcast";
     params.entity = "podcastAuthor";
 
-    const { data, error } = await fetchAPIData(
-      this.searchEndpoint,
-      params,
-      this.fetch
-    );
-    if (error) return { error, authors: [] };
+    const data = await fetchAPIData(this.searchEndpoint, params, this.fetch);
 
-    return {
-      error: null,
-      authors: createAuthorList(data)
-    };
+    return data.results.map(r => translateAuthor(r));
+  }
+
+  async getPodcast(podcastID) {
+    const id = parseInt(podcastID, 10);
+    if (isNaN(id)) {
+      throw new Error(
+        "The ID provided to the iTunes Search API must be a valid integer. ID given was: " +
+          podcastID
+      );
+    }
+
+    const data = await fetchAPIData(this.lookupEndpoint, { id }, this.fetch);
+    return translatePodcast(data.results[0]);
+  }
+
+  async getAuthor(authorID) {
+    const id = parseInt(authorID, 10);
+    if (isNaN(id)) {
+      throw new Error(
+        "The ID provided to the iTunes Search API must be a valid integer. ID given was: " +
+          authorID
+      );
+    }
+
+    const data = await fetchAPIData(this.lookupEndpoint, { id }, this.fetch);
+    return translateAuthor(data.results[0]);
   }
 }

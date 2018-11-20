@@ -1,6 +1,10 @@
-import ITunesService from "./ITunesService";
+import ITunesService, {
+  translatePodcast,
+  translateAuthor
+} from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { Podcast, Author } from "../domain";
+import { readFileSync } from "fs";
 
 function createErrorService() {
   return new ITunesService("https://itunes.apple.com", () =>
@@ -10,79 +14,63 @@ function createErrorService() {
 
 const record = setupRecorder();
 
-it("should return errors when fetch errors", async () => {
-  expect.assertions(2);
+it("should throw when fetch errors", async () => {
+  expect.assertions(4);
 
   const iTunes = createErrorService();
-  let received;
-  const podcastsExpected = {
-    error: expect.any(Error),
-    podcasts: []
-  };
-  const authorsExpected = {
-    error: expect.any(Error),
-    authors: []
-  };
+  const expected = expect.any(Error);
 
   // Search podcasts
-  received = await iTunes.searchPodcasts({ term: "food" });
-  expect(received).toEqual(podcastsExpected);
+  await expect(iTunes.searchPodcasts({ term: "food" })).rejects.toEqual(
+    expected
+  );
 
   // Search authors
-  received = await iTunes.searchAuthors({ term: "BBC" });
-  expect(received).toEqual(authorsExpected);
+  await expect(iTunes.searchAuthors({ term: "BBC" })).rejects.toEqual(expected);
 
-  // TODO: Get podcast
+  // Get podcast
+  await expect(iTunes.getPodcast(1109271715)).rejects.toEqual(expected);
 
-  // TODO: Get author
+  // Get author
+  await expect(iTunes.getAuthor(1043703531)).rejects.toEqual(expected);
 });
 
-it("should return errors when response is not OK", async () => {
+it("should throw when response is not OK", async () => {
   expect.assertions(2);
 
   const iTunes = new ITunesService("https://itunes.apple.com");
   let completeRecording, assertScopesFinished;
-  let received;
-  const podcastsExpected = {
-    error: expect.any(Error),
-    podcasts: []
-  };
-  const authorsExpected = {
-    error: expect.any(Error),
-    authors: []
-  };
+  let expected = expect.any(Error);
 
   // Search podcasts
   ({ completeRecording, assertScopesFinished } = await record(
     "search-podcasts-failure"
   ));
-  received = await iTunes.searchPodcasts({
-    term: "food",
-    country: "foo"
-  });
+
+  await expect(
+    iTunes.searchPodcasts({
+      term: "food",
+      country: "foo"
+    })
+  ).rejects.toEqual(expected);
 
   completeRecording();
   assertScopesFinished();
-
-  expect(received).toEqual(podcastsExpected);
 
   // Search authors
   ({ completeRecording, assertScopesFinished } = await record(
     "search-authors-failure"
   ));
-  received = await iTunes.searchAuthors({
-    term: "BBC",
-    country: "foo"
-  });
+
+  await expect(
+    iTunes.searchAuthors({
+      term: "BBC",
+      country: "foo"
+    })
+  ).rejects.toEqual(expected);
 
   completeRecording();
   assertScopesFinished();
-
-  expect(received).toEqual(authorsExpected);
-
-  // TODO: Get podcast
-
-  // TODO: Get author
 });
 
 describe("searchPodcasts", () => {
@@ -96,10 +84,11 @@ describe("searchPodcasts", () => {
 
     const iTunes = new ITunesService("https://itunes.apple.com");
     const received = await iTunes.searchPodcasts({ term: "food", limit: 3 });
-    const expected = {
-      error: null,
-      podcasts: [expect.any(Podcast), expect.any(Podcast), expect.any(Podcast)]
-    };
+    const expected = [
+      expect.any(Podcast),
+      expect.any(Podcast),
+      expect.any(Podcast)
+    ];
 
     completeRecording();
     assertScopesFinished();
@@ -119,13 +108,101 @@ describe("searchAuthors", () => {
 
     const iTunes = new ITunesService("https://itunes.apple.com");
     const received = await iTunes.searchAuthors({ term: "BBC", limit: 2 });
-    const expected = {
-      error: null,
-      authors: [expect.any(Author), expect.any(Author)]
-    };
+    const expected = [expect.any(Author), expect.any(Author)];
 
     completeRecording();
     assertScopesFinished();
+
+    expect(received).toEqual(expected);
+  });
+});
+
+describe("getPodcast", () => {
+  it("should throw if given a non-integer ID", async () => {
+    expect.assertions(1);
+
+    const iTunes = new ITunesService("https://itunes.apple.com/");
+
+    await expect(iTunes.getPodcast("foo")).rejects.toEqual(expect.any(Error));
+  });
+
+  it("should return a podcast", async () => {
+    expect.assertions(1);
+
+    const { completeRecording, assertScopesFinished } = await record(
+      "get-podcast-success"
+    );
+
+    const iTunes = new ITunesService("https://itunes.apple.com/");
+    const received = await iTunes.getPodcast(1109271715);
+    const expected = expect.any(Podcast);
+
+    completeRecording();
+    assertScopesFinished();
+
+    expect(received).toEqual(expected);
+  });
+});
+
+describe("getAuthor", () => {
+  it("should throw if given a non-integer ID", async () => {
+    expect.assertions(1);
+
+    const iTunes = new ITunesService("https://itunes.apple.com/");
+
+    await expect(iTunes.getAuthor("foo")).rejects.toEqual(expect.any(Error));
+  });
+
+  it("should return an author", async () => {
+    expect.assertions(1);
+
+    const { completeRecording, assertScopesFinished } = await record(
+      "get-author-success"
+    );
+
+    const iTunes = new ITunesService("https://itunes.apple.com/");
+    const received = await iTunes.getAuthor(1043703531);
+    const expected = expect.any(Author);
+
+    completeRecording();
+    assertScopesFinished();
+
+    expect(received).toEqual(expected);
+  });
+});
+
+describe("translatePodcast", () => {
+  it("should translate the raw API response into a podcast model", () => {
+    const result = JSON.parse(
+      readFileSync(__dirname + "/__fixtures__/podcast-list.json")
+    ).results[0];
+    const received = translatePodcast(result);
+    const expected = new Podcast({
+      iTunesID: result.collectionId,
+      name: result.collectionName,
+      feedURL: result.feedUrl,
+      thumbnailURLs: {
+        "30": result.artworkUrl30,
+        "60": result.artworkUrl60,
+        "100": result.artworkUrl100,
+        "600": result.artworkUrl600
+      }
+    });
+
+    expect(received).toEqual(expected);
+  });
+});
+
+describe("translateAuthor", () => {
+  it("should translate the raw API response into an author model", () => {
+    const result = JSON.parse(
+      readFileSync(__dirname + "/__fixtures__/author-list.json")
+    ).results[0];
+    const received = translateAuthor(result);
+    const expected = new Author({
+      iTunesID: result.artistId,
+      name: result.artistName
+    });
 
     expect(received).toEqual(expected);
   });
