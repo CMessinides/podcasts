@@ -24,6 +24,7 @@
   ],
   "devDependencies": {
     "@types/react": "^16.7.6",
-    "@types/react-dom": "^16.0.9"
+    "@types/react-dom": "^16.0.9",
+    "nock-record": "^0.3.3"
   }
 }
