@@ -817,7 +817,12 @@
     "@svgr/core" "^2.4.1"
     loader-utils "^1.1.0"
 
-"@types/node@*":
+"@types/jest@^23.3.9":
+  version "23.3.9"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.9.tgz#c16b55186ee73ae65e001fbee69d392c51337ad1"
+  integrity sha512-wNMwXSUcwyYajtbayfPp55tSayuDVU6PfY5gzvRSj80UvxdXEJOVPnUVajaOp7NgXLm+1e2ZDLULmpsU9vDvQw==
+
+"@types/node@*", "@types/node@^10.12.9":
   version "10.12.9"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.9.tgz#a07bfa74331471e1dc22a47eb72026843f7b95c8"
   integrity sha512-eajkMXG812/w3w4a1OcBlaTwsFPO5F7fJ/amy+tieQxEMWBlbV1JGSjkFM+zkHNf81Cad+dfIRA+IBkvmvdAeA==
@@ -3630,6 +3635,13 @@ fast-levenshtein@~2.0.4:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-xml-parser@^3.12.7:
+  version "3.12.7"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-3.12.7.tgz#dc7c6c58e7b767f8033e112830db6fcde131f8bd"
+  integrity sha512-8mOpwbqsclo9qwemEcNMqGwvbQrNFFWaYS0iOTp4gKeJ/YEvwSEhILrlf1MTp/pqGUpPR4CKgcf8ZA/dEBahag==
+  dependencies:
+    nimnjs "^1.3.2"
+
 fastparse@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/fastparse/-/fastparse-1.1.2.tgz#91728c5a5942eced8531283c79441ee4122c35a9"
@@ -6218,6 +6230,24 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+nimn-date-parser@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/nimn-date-parser/-/nimn-date-parser-1.0.0.tgz#4ce55d1fd5ea206bbe82b76276f7b7c582139351"
+  integrity sha512-1Nf+x3EeMvHUiHsVuEhiZnwA8RMeOBVTQWfB1S2n9+i6PYCofHd2HRMD+WOHIHYshy4T4Gk8wQoCol7Hq3av8Q==
+
+nimn_schema_builder@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nimn_schema_builder/-/nimn_schema_builder-1.1.0.tgz#b370ccf5b647d66e50b2dcfb20d0aa12468cd247"
+  integrity sha512-DK5/B8CM4qwzG2URy130avcwPev4uO0ev836FbQyKo1ms6I9z/i6EJyiZ+d9xtgloxUri0W+5gfR8YbPq7SheA==
+
+nimnjs@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/nimnjs/-/nimnjs-1.3.2.tgz#a6a877968d87fad836375a4f616525e55079a5ba"
+  integrity sha512-TIOtI4iqkQrUM1tiM76AtTQem0c7e56SkDZ7sj1d1MfUsqRcq2ZWQvej/O+HBTZV7u/VKnwlKTDugK/75IRPPw==
+  dependencies:
+    nimn-date-parser "^1.0.0"
+    nimn_schema_builder "^1.0.0"
 
 no-case@^2.2.0:
   version "2.3.2"
@@ -9178,6 +9208,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typescript@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.6.tgz#b6543a83cfc8c2befb3f4c8fba6896f5b0c9be68"
+  integrity sha512-tDMYfVtvpb96msS1lDX9MEdHrW4yOuZ4Kdc4Him9oU796XldPYF/t2+uKoX0BBa0hXXwDlqYQbXY5Rzjzc5hBA==
 
 uglify-es@^3.3.4:
   version "3.3.9"
