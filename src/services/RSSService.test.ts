@@ -92,8 +92,10 @@ describe("RSS Service", () => {
   it("should return a feed of episodes for a given URL", async () => {
     expect.assertions(2);
 
-    const received = await createRSSService(() => {
-      return Promise.resolve(new Response(xmlString));
+    const received = await createRSSService({
+      async fetch() {
+        return await Promise.resolve(new Response(xmlString));
+      }
     }).getFeed("https://rss.art19.com/the-ringer-nba-show");
     const expected = {
       entity: "feed",

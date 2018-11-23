@@ -28,7 +28,7 @@ export interface ITunesService {
 
 export interface ITunesServiceFactory {
   (
-    fetch?: GlobalFetch["fetch"],
+    network: NetworkService,
     searchEndpoint?: string,
     lookupEndpoint?: string
   ): ITunesService;
@@ -40,7 +40,7 @@ export interface RSSService {
 }
 
 export interface RSSServiceFactory {
-  (fetch?: GlobalFetch["fetch"]): RSSService;
+  (network: NetworkService): RSSService;
 }
 
 // Entity input interfaces

@@ -1,5 +1,4 @@
 import { ApplicationError } from "../types";
-import createNetworkService from "./NetworkService";
 import {
   ITunesService,
   ITunesParams,
@@ -153,11 +152,10 @@ export function createITunesGateway(): ITunesGateway {
 }
 
 export default function createITunesService(
-  fetch: GlobalFetch["fetch"] = window.fetch,
+  network: NetworkService,
   searchEndpoint = "https://itunes.apple.com/search",
   lookupEndpoint = "https://itunes.apple.com/lookup"
 ): ITunesService {
-  const network = createNetworkService(fetch);
   const gateway = createITunesGateway();
   return {
     async searchPodcasts(

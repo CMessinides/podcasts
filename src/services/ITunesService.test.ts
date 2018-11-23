@@ -12,6 +12,14 @@ const authorResp = JSON.parse(
   readFileSync(__dirname + "/__fixtures__/author-list.json").toString()
 );
 
+const defaultNetworkService = {
+  async fetch(url: string) {
+    const resp = await window.fetch(url);
+    if (!resp.ok) throw new Error("Response is not OK");
+    return resp;
+  }
+};
+
 const anyPodcast = expect.objectContaining({
   entity: "podcast",
   ID: expect.any(Number),
@@ -76,7 +84,9 @@ describe("iTunes Service", () => {
         "itunes-podcast-search"
       );
 
-      const received = await createITunesService().searchPodcasts("food");
+      const received = await createITunesService(
+        defaultNetworkService
+      ).searchPodcasts("food");
       const expected = expect.arrayContaining([anyPodcast]);
 
       completeRecording();
@@ -92,7 +102,9 @@ describe("iTunes Service", () => {
         "itunes-author-search"
       );
 
-      const received = await createITunesService().searchAuthors("ringer");
+      const received = await createITunesService(
+        defaultNetworkService
+      ).searchAuthors("ringer");
       const expected = expect.arrayContaining([anyAuthor]);
 
       completeRecording();
@@ -104,7 +116,7 @@ describe("iTunes Service", () => {
     it("should allow a limit on search results", async () => {
       expect.assertions(2);
 
-      const itunes = createITunesService();
+      const itunes = createITunesService(defaultNetworkService);
 
       let { completeRecording, assertScopesFinished } = await record(
         "itunes-limit-podcast-search"
@@ -138,7 +150,9 @@ describe("iTunes Service", () => {
         "itunes-podcast-lookup"
       );
 
-      const received = await createITunesService().getPodcastByID(262727638);
+      const received = await createITunesService(
+        defaultNetworkService
+      ).getPodcastByID(262727638);
       const expected = anyPodcast;
 
       completeRecording();
@@ -154,7 +168,9 @@ describe("iTunes Service", () => {
         "itunes-author-lookup"
       );
 
-      const received = await createITunesService().getAuthorByID(1134742667);
+      const received = await createITunesService(
+        defaultNetworkService
+      ).getAuthorByID(1134742667);
       const expected = anyAuthor;
 
       completeRecording();
@@ -166,10 +182,12 @@ describe("iTunes Service", () => {
     it("should return null if ID does not match any record", async () => {
       expect.assertions(2);
 
-      const itunes = createITunesService(() => {
-        return Promise.resolve(
-          new Response('{ "resultCount": 0, "results": [] }')
-        );
+      const itunes = createITunesService({
+        async fetch() {
+          return await Promise.resolve(
+            new Response('{ "resultCount": 0, "results": [] }')
+          );
+        }
       });
 
       await expect(itunes.getPodcastByID(1109271715)).resolves.toBeNull();

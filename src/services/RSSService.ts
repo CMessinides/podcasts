@@ -1,10 +1,10 @@
 import { ApplicationError } from "../types";
 import XMLParser from "fast-xml-parser";
-import createNetworkService from "./NetworkService";
 import {
   RSSService,
   FeedInputData,
-  EpisodeInputData
+  EpisodeInputData,
+  NetworkService
 } from "../repositories/types";
 
 export const RSS_ERROR = "rss/error";
@@ -127,12 +127,10 @@ export function createRSSGateway(
   };
 }
 
-export default function createRSSService(
-  fetch: GlobalFetch["fetch"] = window.fetch
-): RSSService {
+export default function createRSSService(network: NetworkService): RSSService {
   return {
     async getFeed(url: string) {
-      const response = await createNetworkService(fetch).fetch(url);
+      const response = await network.fetch(url);
 
       try {
         var xml = await response.text();
