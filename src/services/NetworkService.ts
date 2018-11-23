@@ -1,10 +1,11 @@
-import { FetchFn, ApplicationError, NetworkService } from "../types";
+import { ApplicationError } from "../types";
+import { NetworkService } from "../repositories/types";
 
 export const NETWORK_ERROR = "network/error";
 export const NETWORK_HTTP_RESPONSE_ERROR = "network/http-response-error";
 
-export default function createNetworkConnection(
-  fetch: FetchFn
+export default function createNetworkService(
+  fetch: GlobalFetch["fetch"] = window.fetch
 ): NetworkService {
   return {
     async fetch(url: string) {

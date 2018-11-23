@@ -59,7 +59,7 @@ describe("RSS Gateway", () => {
 
       for (let i = 0; i < cases.length; i++) {
         expect(rss.read(cases[i].input).episodes[0]).toEqual(
-          expect.objectContaining({ guid: cases[i].output })
+          expect.objectContaining({ ID: cases[i].output })
         );
       }
     });
@@ -67,12 +67,17 @@ describe("RSS Gateway", () => {
 
   it("should return a null feed if the XML is missing tags", () => {
     const expected = {
-      description: "No description",
+      entity: "feed",
+      description: null,
       episodes: [
         {
-          guid: "",
+          entity: "episode",
+          ID: null,
           name: "Untitled",
-          description: "No description"
+          description: null,
+          episode: null,
+          episodeType: null,
+          audioURL: null
         }
       ]
     };
@@ -89,8 +94,9 @@ describe("RSS Service", () => {
 
     const received = await createRSSService(() => {
       return Promise.resolve(new Response(xmlString));
-    }).feed("https://rss.art19.com/the-ringer-nba-show");
+    }).getFeed("https://rss.art19.com/the-ringer-nba-show");
     const expected = {
+      entity: "feed",
       description: expect.any(String),
       episodes: expect.any(Array)
     };

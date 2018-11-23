@@ -1,13 +1,11 @@
-import {
-  EpisodeResult,
-  FeedResult,
-  FetchFn,
-  ApplicationError,
-  RSSGateway,
-  RSSService
-} from "../types";
+import { ApplicationError } from "../types";
 import XMLParser from "fast-xml-parser";
-import createNetworkConnection from "./NetworkService";
+import createNetworkService from "./NetworkService";
+import {
+  RSSService,
+  FeedInputData,
+  EpisodeInputData
+} from "../repositories/types";
 
 export const RSS_ERROR = "rss/error";
 export const RSS_READ_ERROR = "rss/read-error";
@@ -16,22 +14,17 @@ export const RSS_INVALID_XML_ERROR = "rss/invalid-xml-error";
 type XMLOpts = Partial<XMLParser.X2jOptions>;
 
 interface XMLElementObj {
-  [attr: string]: any;
-  "#text"?: string;
+  [attr: string]: string | number | XMLElementObj;
 }
 
 type XMLElement = XMLElementObj | string;
 
 interface XMLItem {
   [key: string]: XMLElement;
-  title: XMLElement;
-  description: XMLElement;
-  guid: XMLElement;
-  enclosure: XMLElement;
-  "itunes:title": XMLElement;
-  "itunes:summary": XMLElement;
-  "itunes:episode": XMLElement;
-  "itunes:episodeType": XMLElement;
+}
+
+interface RSSGateway {
+  read(xml: string): FeedInputData;
 }
 
 function validateFeed(feed: any): true {
@@ -56,25 +49,25 @@ function getAttrFromElement(
   el?: XMLElement,
   key: string = "#text"
 ): string | null {
-  if (el && typeof el !== "string" && el[key]) return el[key];
+  if (el && typeof el !== "string" && el[key]) return el[key] as string;
   return null;
 }
 
 function getTextFromElement(el?: XMLElement): string | null {
   if (typeof el === "string") return el;
-  if (el && el["#text"]) return el["#text"];
+  if (el && el["#text"]) return el["#text"] as string;
   return null;
 }
 
-function pickGUIDFromItem(
+function pickIDFromItem(
   item: Partial<XMLItem>,
   attrPrefix: string = ""
-): string {
+): string | null {
   return (
     getTextFromElement(item.guid) ||
     getAttrFromElement(item.enclosure, attrPrefix + "url") ||
     getTextFromElement(item["itunes:episode"]) ||
-    ""
+    null
   );
 }
 
@@ -88,7 +81,7 @@ export function createRSSGateway(
 ): RSSGateway {
   const prefix = xmlOpts.attributeNamePrefix;
   return {
-    read(xml: string): FeedResult {
+    read(xml: string): FeedInputData {
       const feed = parse(xml, xmlOpts);
 
       try {
@@ -105,10 +98,11 @@ export function createRSSGateway(
         ? feed.rss.channel.item
         : Array(feed.rss.channel.item);
 
-      const episodes: EpisodeResult[] = items.map(
-        (item: Partial<XMLItem>): EpisodeResult => {
+      const episodes: EpisodeInputData[] = items.map(
+        (item: Partial<XMLItem>): EpisodeInputData => {
           return {
-            guid: pickGUIDFromItem(item, prefix),
+            entity: "episode",
+            ID: pickIDFromItem(item, prefix),
             name:
               getTextFromElement(item.title) ||
               getTextFromElement(item["itunes:title"]) ||
@@ -116,18 +110,17 @@ export function createRSSGateway(
             description:
               getTextFromElement(item.description) ||
               getTextFromElement(item["itunes:summary"]) ||
-              "No description",
-            episode: parseInt(pickEpisodeFromItem(item), 10) || undefined,
-            episodeType:
-              getTextFromElement(item["itunes:episodeType"]) || undefined,
+              null,
+            episode: parseInt(pickEpisodeFromItem(item), 10) || null,
+            episodeType: getTextFromElement(item["itunes:episodeType"]) || null,
             audioURL:
-              getAttrFromElement(item["enclosure"], prefix + "url") || undefined
+              getAttrFromElement(item["enclosure"], prefix + "url") || null
           };
         }
       );
       return {
-        description:
-          getTextFromElement(feed.rss.channel["title"]) || "No description",
+        entity: "feed",
+        description: getTextFromElement(feed.rss.channel["title"]) || null,
         episodes
       };
     }
@@ -135,11 +128,11 @@ export function createRSSGateway(
 }
 
 export default function createRSSService(
-  fetch: FetchFn = window.fetch
+  fetch: GlobalFetch["fetch"] = window.fetch
 ): RSSService {
   return {
-    async feed(url: string) {
-      const response = await createNetworkConnection(fetch).fetch(url);
+    async getFeed(url: string) {
+      const response = await createNetworkService(fetch).fetch(url);
 
       try {
         var xml = await response.text();

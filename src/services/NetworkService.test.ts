@@ -1,4 +1,4 @@
-import createNetworkConnection, {
+import createNetworkService, {
   NETWORK_ERROR,
   NETWORK_HTTP_RESPONSE_ERROR
 } from "./NetworkService";
@@ -14,7 +14,7 @@ it("should throw when fetch() errors", async () => {
   });
 
   await expect(
-    createNetworkConnection(() => {
+    createNetworkService(() => {
       return Promise.reject(new Error("No internet connection"));
     }).fetch("https://networkerror.com/")
   ).rejects.toEqual(expected);
@@ -32,7 +32,7 @@ it("should throw when response is not OK", async () => {
   });
 
   await expect(
-    createNetworkConnection(window.fetch).fetch("http://httpstat.us/404")
+    createNetworkService(window.fetch).fetch("http://httpstat.us/404")
   ).rejects.toEqual(expected);
 
   completeRecording();

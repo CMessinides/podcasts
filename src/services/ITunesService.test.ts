@@ -1,24 +1,20 @@
 import createITunesService, { createITunesGateway } from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { readFileSync } from "fs";
-import {
-  ITunesTrackResponse,
-  ITunesArtistResponse,
-  PodcastResult,
-  AuthorResult
-} from "../types";
+import { PodcastInputData, AuthorInputData } from "../repositories/types";
 
 const record = setupRecorder();
 
-const podcastResp: ITunesTrackResponse = JSON.parse(
+const podcastResp = JSON.parse(
   readFileSync(__dirname + "/__fixtures__/podcast-list.json").toString()
 );
-const authorResp: ITunesArtistResponse = JSON.parse(
+const authorResp = JSON.parse(
   readFileSync(__dirname + "/__fixtures__/author-list.json").toString()
 );
 
 const anyPodcast = expect.objectContaining({
-  iTunesID: expect.any(Number),
+  entity: "podcast",
+  ID: expect.any(Number),
   name: expect.any(String),
   censoredName: expect.any(String),
   explicit: expect.any(Boolean),
@@ -31,17 +27,19 @@ const anyPodcast = expect.objectContaining({
 });
 
 const anyAuthor = expect.objectContaining({
-  iTunesID: expect.any(Number),
+  entity: "author",
+  ID: expect.any(Number),
   name: expect.any(String)
 });
 
 describe("iTunes Gateway", () => {
   it("should create a podcast from the iTunes track response", () => {
     const p = podcastResp.results[0];
-    const received = createITunesGateway().readPodcast(p);
-    const expected: PodcastResult = {
-      iTunesID: p.collectionId,
-      iTunesAuthorID: p.artistId,
+    const received = createITunesGateway().read(p);
+    const expected: PodcastInputData = {
+      entity: "podcast",
+      ID: p.collectionId,
+      authorID: p.artistId,
       name: p.collectionName,
       censoredName: p.collectionCensoredName,
       explicit: p.collectionExplicitness === "explicit",
@@ -58,9 +56,10 @@ describe("iTunes Gateway", () => {
 
   it("should create an author from the iTunes artist response", () => {
     const a = authorResp.results[0];
-    const received = createITunesGateway().readAuthor(a);
-    const expected: AuthorResult = {
-      iTunesID: a.artistId,
+    const received = createITunesGateway().read(a);
+    const expected: AuthorInputData = {
+      entity: "author",
+      ID: a.artistId,
       name: a.artistName
     };
 
