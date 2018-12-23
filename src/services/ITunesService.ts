@@ -5,7 +5,7 @@ import {
   PodcastInputData,
   AuthorInputData,
   NetworkService
-} from "../repositories/types";
+} from "../stores/types";
 
 interface ITunesSearchParams extends ITunesParams {
   term: string;
@@ -121,11 +121,12 @@ async function getParsedResponse(
 function readPodcast(entity: ITunesTrack): PodcastInputData {
   return {
     entity: "podcast",
-    ID: entity.collectionId,
+    ID: entity.collectionId.toString(),
     authorID: entity.artistId || null,
     name: entity.collectionName,
     censoredName: entity.collectionCensoredName,
     explicit: entity.collectionExplicitness === "explicit",
+    feedURL: entity.feedUrl,
     thumbnailURLs: {
       x30: entity.artworkUrl30,
       x60: entity.artworkUrl60,

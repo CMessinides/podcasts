@@ -1,7 +1,7 @@
 import createITunesService, { createITunesGateway } from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { readFileSync } from "fs";
-import { PodcastInputData, AuthorInputData } from "../repositories/types";
+import { PodcastInputData, AuthorInputData } from "../stores/types";
 
 const record = setupRecorder();
 
@@ -51,6 +51,7 @@ describe("iTunes Gateway", () => {
       name: p.collectionName,
       censoredName: p.collectionCensoredName,
       explicit: p.collectionExplicitness === "explicit",
+      feedURL: p.feedUrl,
       thumbnailURLs: {
         x30: p.artworkUrl30,
         x60: p.artworkUrl60,

@@ -1,3 +1,37 @@
+export interface Podcast {
+  ID: string;
+  name: string;
+  description: string | null;
+  author: Author;
+  channel: {
+    URL: string;
+    episodes: Episode[];
+  };
+}
+
+export interface PodcastView {
+  loading?: boolean;
+  error?: ApplicationError;
+}
+
+export interface Author {
+  ID: number | null;
+  name: string;
+  podcasts: Podcast[];
+}
+
+export interface AuthorView {
+  loading?: boolean;
+  error?: ApplicationError;
+}
+
+export interface Episode {
+  ID: string;
+  name: string;
+  description: string;
+  audioURL: string;
+}
+
 // Custom error types
 export interface ErrorData {
   [key: string]: any;

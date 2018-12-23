@@ -5,7 +5,7 @@ import {
   FeedInputData,
   EpisodeInputData,
   NetworkService
-} from "../repositories/types";
+} from "../stores/types";
 
 export const RSS_ERROR = "rss/error";
 export const RSS_READ_ERROR = "rss/read-error";

@@ -50,17 +50,21 @@ interface EntityInputData {
 
 export interface PodcastInputData extends EntityInputData {
   entity: "podcast";
-  ID: number;
+  ID: string;
   name: string;
   censoredName: string;
   explicit: boolean;
+  feedURL: string;
   thumbnailURLs: {
     x30: string;
     x60: string;
     x100: string;
     x600: string;
   };
-  authorID: number | null;
+  author: {
+    ID: number | null;
+    name: string;
+  };
 }
 
 export interface AuthorInputData extends EntityInputData {
