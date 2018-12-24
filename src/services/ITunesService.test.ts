@@ -47,7 +47,10 @@ describe("iTunes Gateway", () => {
     const expected: PodcastInputData = {
       entity: "podcast",
       ID: p.collectionId,
-      authorID: p.artistId,
+      author: {
+        ID: p.artistId,
+        name: p.artistName
+      },
       name: p.collectionName,
       censoredName: p.collectionCensoredName,
       explicit: p.collectionExplicitness === "explicit",

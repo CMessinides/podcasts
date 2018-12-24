@@ -50,7 +50,7 @@ interface EntityInputData {
 
 export interface PodcastInputData extends EntityInputData {
   entity: "podcast";
-  ID: string;
+  ID: number;
   name: string;
   censoredName: string;
   explicit: boolean;

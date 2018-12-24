@@ -1,29 +1,46 @@
-export interface Podcast {
-  ID: string;
-  name: string;
-  description: string | null;
-  author: Author;
-  channel: {
-    URL: string;
-    episodes: Episode[];
-  };
-}
-
-export interface PodcastView {
-  loading?: boolean;
+interface Stub {
+  loading: boolean;
   error?: ApplicationError;
 }
 
-export interface Author {
+export function isStub(s: any): s is Stub {
+  return (<Stub>s).loading !== undefined;
+}
+
+interface PodcastBase {
+  ID: number;
+}
+
+export interface Podcast extends PodcastBase {
+  name: string;
+  author: Author | AuthorStub;
+  channel: Channel | ChannelStub;
+}
+
+export type PodcastStub = Stub & PodcastBase;
+
+interface ChannelBase {
+  URL: string;
+  lastUpdated: Date;
+}
+
+export interface Channel extends ChannelBase {
+  description: string;
+  episodes: Episode[];
+}
+
+export type ChannelStub = Stub & ChannelBase;
+
+interface AuthorBase {
   ID: number | null;
   name: string;
+}
+
+export interface Author extends AuthorBase {
   podcasts: Podcast[];
 }
 
-export interface AuthorView {
-  loading?: boolean;
-  error?: ApplicationError;
-}
+export type AuthorStub = Stub & AuthorBase;
 
 export interface Episode {
   ID: string;

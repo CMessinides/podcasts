@@ -121,8 +121,11 @@ async function getParsedResponse(
 function readPodcast(entity: ITunesTrack): PodcastInputData {
   return {
     entity: "podcast",
-    ID: entity.collectionId.toString(),
-    authorID: entity.artistId || null,
+    ID: entity.collectionId,
+    author: {
+      ID: entity.artistId || null,
+      name: entity.artistName
+    },
     name: entity.collectionName,
     censoredName: entity.collectionCensoredName,
     explicit: entity.collectionExplicitness === "explicit",

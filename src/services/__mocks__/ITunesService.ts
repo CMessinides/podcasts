@@ -6,7 +6,7 @@ import {
 
 export const defaultMockPodcast: PodcastInputData = {
   entity: "podcast",
-  ID: "1",
+  ID: 1,
   author: {
     ID: 1,
     name: "Author Name"
