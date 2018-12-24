@@ -86,7 +86,11 @@ interface ITunesGateway {
   read(entity: ITunesEntity): PodcastInputData | AuthorInputData;
 }
 
-const ITUNES_READ_ERROR = "itunes/read-error";
+export enum ITunesErrors {
+  READ_ERROR = "itunes/read-error",
+  PODCAST_NOT_FOUND = "itunes/podcast-not-found",
+  AUTHOR_NOT_FOUND = "itunes/author-not-found"
+}
 
 function createQueryString(params: { [key: string]: any }): string {
   return (
@@ -110,8 +114,8 @@ async function getParsedResponse(
   } catch (error) {
     throw new ApplicationError(
       "ITunesReadError",
-      "ITunes service cannot read response body",
-      ITUNES_READ_ERROR,
+      "ITunes Service cannot read response body",
+      ITunesErrors.READ_ERROR,
       error,
       { params, response }
     );
@@ -197,23 +201,35 @@ export default function createITunesService(
       return parsed.results.map(r => gateway.read(r) as AuthorInputData);
     },
 
-    async getPodcastByID(id: number) {
+    async getPodcastByID(ID: number) {
       const parsed = (await getParsedResponse(
         lookupEndpoint,
-        { id },
+        { id: ID },
         network
       )) as ITunesResponse;
-      if (parsed.resultCount === 0) return null;
+      if (parsed.resultCount === 0)
+        throw new ApplicationError(
+          "Podcast not found",
+          "ITunes Service could not find any podcast matching the given ID: " +
+            ID,
+          ITunesErrors.PODCAST_NOT_FOUND
+        );
       return gateway.read(parsed.results[0]) as PodcastInputData;
     },
 
-    async getAuthorByID(id: number) {
+    async getAuthorByID(ID: number) {
       const parsed = (await getParsedResponse(
         lookupEndpoint,
-        { id },
+        { id: ID },
         network
       )) as ITunesResponse;
-      if (parsed.resultCount === 0) return null;
+      if (parsed.resultCount === 0)
+        throw new ApplicationError(
+          "Author not found",
+          "ITunes Service could not find any author matching the given ID: " +
+            ID,
+          ITunesErrors.AUTHOR_NOT_FOUND
+        );
       return gateway.read(parsed.results[0]) as AuthorInputData;
     }
   };

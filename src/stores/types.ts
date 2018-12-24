@@ -22,8 +22,8 @@ export interface ITunesService {
     term: string,
     params?: Partial<ITunesParams>
   ): Promise<AuthorInputData[]>;
-  getPodcastByID(id: number): Promise<PodcastInputData | null>;
-  getAuthorByID(id: number): Promise<AuthorInputData | null>;
+  getPodcastByID(id: number): Promise<PodcastInputData>;
+  getAuthorByID(id: number): Promise<AuthorInputData>;
 }
 
 export interface ITunesServiceFactory {

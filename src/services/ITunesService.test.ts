@@ -2,6 +2,7 @@ import createITunesService, { createITunesGateway } from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { readFileSync } from "fs";
 import { PodcastInputData, AuthorInputData } from "../stores/types";
+import { ApplicationError } from "../types";
 
 const record = setupRecorder();
 
@@ -183,7 +184,7 @@ describe("iTunes Service", () => {
       expect(received).toEqual(expected);
     });
 
-    it("should return null if ID does not match any record", async () => {
+    it("should throw if ID does not match any record", async () => {
       expect.assertions(2);
 
       const itunes = createITunesService({
@@ -194,9 +195,13 @@ describe("iTunes Service", () => {
         }
       });
 
-      await expect(itunes.getPodcastByID(1109271715)).resolves.toBeNull();
+      await expect(itunes.getPodcastByID(1109271715)).rejects.toEqual(
+        expect.any(ApplicationError)
+      );
 
-      await expect(itunes.getAuthorByID(1043703531)).resolves.toBeNull();
+      await expect(itunes.getAuthorByID(1043703531)).rejects.toEqual(
+        expect.any(ApplicationError)
+      );
     });
   });
 });
