@@ -1,53 +1,84 @@
-interface Stub {
-  loading: boolean;
+interface BaseEntity {
+  lastUpdated?: number;
+  pending?: boolean;
   error?: ApplicationError;
 }
 
-export function isStub(s: any): s is Stub {
-  return (<Stub>s).loading !== undefined;
+interface IncompleteEntity<P> extends BaseEntity {
+  data: P;
 }
 
-interface PodcastBase {
+interface CompleteEntity<D> extends BaseEntity {
+  lastUpdated: number;
+  data: D;
+}
+
+type Entity<P, D extends P> = IncompleteEntity<P> | CompleteEntity<D>;
+
+export function isComplete<P, D extends P>(
+  e: Entity<P, D>
+): e is CompleteEntity<D> {
+  return typeof e.lastUpdated === "number";
+}
+
+export interface PodcastPartial {
   ID: number;
 }
 
-export interface Podcast extends PodcastBase {
+export interface PodcastData extends PodcastPartial {
   name: string;
-  author: Author | AuthorStub;
-  channel: Channel | ChannelStub;
+  author: {
+    ID?: number;
+    name: string;
+  };
+  feed: Feed;
 }
 
-export type PodcastStub = Stub & PodcastBase;
+export type Podcast = Entity<PodcastPartial, PodcastData>;
 
-interface ChannelBase {
+export interface AuthorPartial {
+  ID: number;
+  name: string;
+}
+
+export interface AuthorData extends AuthorPartial {}
+
+export type Author = Entity<AuthorPartial, AuthorData>;
+
+export interface FeedPartial {
   URL: string;
-  lastUpdated: Date;
 }
 
-export interface Channel extends ChannelBase {
-  description: string;
+export interface FeedData extends FeedPartial {
+  description?: string;
   episodes: Episode[];
 }
 
-export type ChannelStub = Stub & ChannelBase;
-
-interface AuthorBase {
-  ID: number | null;
-  name: string;
-}
-
-export interface Author extends AuthorBase {
-  podcasts: Podcast[];
-}
-
-export type AuthorStub = Stub & AuthorBase;
+export type Feed = Entity<FeedPartial, FeedData>;
 
 export interface Episode {
-  ID: string;
-  name: string;
-  description: string;
-  audioURL: string;
+  ID?: string;
+  name?: string;
+  description?: string;
+  audio?: Audio;
 }
+
+export interface ValidEpisode extends Episode {
+  ID: string;
+  audio: Audio;
+}
+
+export function isValidEpisode(e: Episode): e is ValidEpisode {
+  return e.ID !== undefined && e.audio !== undefined;
+}
+
+export interface AudioPartial {
+  URL: string;
+}
+
+export interface AudioData extends AudioPartial {}
+
+export type Audio = Entity<AudioPartial, AudioData>;
 
 // Custom error types
 export interface ErrorData {

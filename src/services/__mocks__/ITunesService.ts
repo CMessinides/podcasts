@@ -1,10 +1,10 @@
 import {
   ITunesService,
-  PodcastInputData,
-  AuthorInputData
-} from "../../stores/types";
+  PodcastResponseData,
+  AuthorResponseData
+} from "../../store/types";
 
-export const defaultMockPodcast: PodcastInputData = {
+export const defaultMockPodcast: PodcastResponseData = {
   entity: "podcast",
   ID: 1,
   author: {
@@ -23,29 +23,29 @@ export const defaultMockPodcast: PodcastInputData = {
   }
 };
 
-export const defaultMockAuthor: AuthorInputData = {
+export const defaultMockAuthor: AuthorResponseData = {
   entity: "author",
   ID: 1,
   name: "Author Name"
 };
 
-let searchPodcastsOutput: PodcastInputData[] = [defaultMockPodcast];
-export function setSearchPodcastsOutput(output: PodcastInputData[]) {
+let searchPodcastsOutput: PodcastResponseData[] = [defaultMockPodcast];
+export function setSearchPodcastsOutput(output: PodcastResponseData[]) {
   searchPodcastsOutput = output;
 }
 
-let searchAuthorsOutput: AuthorInputData[] = [defaultMockAuthor];
-export function setSearchAuthorsOutput(output: AuthorInputData[]) {
+let searchAuthorsOutput: AuthorResponseData[] = [defaultMockAuthor];
+export function setSearchAuthorsOutput(output: AuthorResponseData[]) {
   searchAuthorsOutput = output;
 }
 
-let getPodcastByIDOutput: PodcastInputData = defaultMockPodcast;
-export function setGetPodcastByIDOutput(output: PodcastInputData) {
+let getPodcastByIDOutput: PodcastResponseData = defaultMockPodcast;
+export function setGetPodcastByIDOutput(output: PodcastResponseData) {
   getPodcastByIDOutput = output;
 }
 
-let getAuthorByIDOutput: AuthorInputData = defaultMockAuthor;
-export function setGetAuthorByID(output: AuthorInputData) {
+let getAuthorByIDOutput: AuthorResponseData = defaultMockAuthor;
+export function setGetAuthorByID(output: AuthorResponseData) {
   getAuthorByIDOutput = output;
 }
 

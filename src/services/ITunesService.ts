@@ -2,10 +2,10 @@ import { ApplicationError } from "../types";
 import {
   ITunesService,
   ITunesParams,
-  PodcastInputData,
-  AuthorInputData,
+  PodcastResponseData,
+  AuthorResponseData,
   NetworkService
-} from "../stores/types";
+} from "../store/types";
 
 interface ITunesSearchParams extends ITunesParams {
   term: string;
@@ -83,7 +83,7 @@ function isTrack(entity: ITunesEntity): entity is ITunesTrack {
 }
 
 interface ITunesGateway {
-  read(entity: ITunesEntity): PodcastInputData | AuthorInputData;
+  read(entity: ITunesEntity): PodcastResponseData | AuthorResponseData;
 }
 
 export enum ITunesErrors {
@@ -122,12 +122,12 @@ async function getParsedResponse(
   }
 }
 
-function readPodcast(entity: ITunesTrack): PodcastInputData {
+function readPodcast(entity: ITunesTrack): PodcastResponseData {
   return {
     entity: "podcast",
     ID: entity.collectionId,
     author: {
-      ID: entity.artistId || null,
+      ID: entity.artistId || undefined,
       name: entity.artistName
     },
     name: entity.collectionName,
@@ -143,7 +143,7 @@ function readPodcast(entity: ITunesTrack): PodcastInputData {
   };
 }
 
-function readAuthor(entity: ITunesArtist): AuthorInputData {
+function readAuthor(entity: ITunesArtist): AuthorResponseData {
   return {
     entity: "author",
     ID: entity.artistId,
@@ -153,7 +153,7 @@ function readAuthor(entity: ITunesArtist): AuthorInputData {
 
 export function createITunesGateway(): ITunesGateway {
   return {
-    read(entity: ITunesEntity): PodcastInputData | AuthorInputData {
+    read(entity: ITunesEntity): PodcastResponseData | AuthorResponseData {
       return isTrack(entity) ? readPodcast(entity) : readAuthor(entity);
     }
   };
@@ -180,7 +180,7 @@ export default function createITunesService(
         queryParams,
         network
       )) as ITunesResponse;
-      return parsed.results.map(r => gateway.read(r) as PodcastInputData);
+      return parsed.results.map(r => gateway.read(r) as PodcastResponseData);
     },
 
     async searchAuthors(
@@ -198,7 +198,7 @@ export default function createITunesService(
         queryParams,
         network
       )) as ITunesResponse;
-      return parsed.results.map(r => gateway.read(r) as AuthorInputData);
+      return parsed.results.map(r => gateway.read(r) as AuthorResponseData);
     },
 
     async getPodcastByID(ID: number) {
@@ -214,7 +214,7 @@ export default function createITunesService(
             ID,
           ITunesErrors.PODCAST_NOT_FOUND
         );
-      return gateway.read(parsed.results[0]) as PodcastInputData;
+      return gateway.read(parsed.results[0]) as PodcastResponseData;
     },
 
     async getAuthorByID(ID: number) {
@@ -230,7 +230,7 @@ export default function createITunesService(
             ID,
           ITunesErrors.AUTHOR_NOT_FOUND
         );
-      return gateway.read(parsed.results[0]) as AuthorInputData;
+      return gateway.read(parsed.results[0]) as AuthorResponseData;
     }
   };
 }

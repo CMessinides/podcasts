@@ -2,10 +2,10 @@ import { ApplicationError } from "../types";
 import XMLParser from "fast-xml-parser";
 import {
   RSSService,
-  FeedInputData,
-  EpisodeInputData,
+  FeedResponseData,
+  EpisodeReponseData,
   NetworkService
-} from "../stores/types";
+} from "../store/types";
 
 export const RSS_ERROR = "rss/error";
 export const RSS_READ_ERROR = "rss/read-error";
@@ -24,7 +24,7 @@ interface XMLItem {
 }
 
 interface RSSGateway {
-  read(xml: string): FeedInputData;
+  read(xml: string): FeedResponseData;
 }
 
 function validateFeed(feed: any): true {
@@ -62,12 +62,11 @@ function getTextFromElement(el?: XMLElement): string | null {
 function pickIDFromItem(
   item: Partial<XMLItem>,
   attrPrefix: string = ""
-): string | null {
+): string {
   return (
     getTextFromElement(item.guid) ||
     getAttrFromElement(item.enclosure, attrPrefix + "url") ||
-    getTextFromElement(item["itunes:episode"]) ||
-    null
+    ""
   );
 }
 
@@ -81,7 +80,7 @@ export function createRSSGateway(
 ): RSSGateway {
   const prefix = xmlOpts.attributeNamePrefix;
   return {
-    read(xml: string): FeedInputData {
+    read(xml: string): FeedResponseData {
       const feed = parse(xml, xmlOpts);
 
       try {
@@ -98,29 +97,30 @@ export function createRSSGateway(
         ? feed.rss.channel.item
         : Array(feed.rss.channel.item);
 
-      const episodes: EpisodeInputData[] = items.map(
-        (item: Partial<XMLItem>): EpisodeInputData => {
+      const episodes: EpisodeReponseData[] = items.map(
+        (item: Partial<XMLItem>): EpisodeReponseData => {
           return {
             entity: "episode",
             ID: pickIDFromItem(item, prefix),
             name:
               getTextFromElement(item.title) ||
               getTextFromElement(item["itunes:title"]) ||
-              "Untitled",
+              undefined,
             description:
               getTextFromElement(item.description) ||
               getTextFromElement(item["itunes:summary"]) ||
-              null,
-            episode: parseInt(pickEpisodeFromItem(item), 10) || null,
-            episodeType: getTextFromElement(item["itunes:episodeType"]) || null,
+              undefined,
+            episode: parseInt(pickEpisodeFromItem(item), 10) || undefined,
+            episodeType:
+              getTextFromElement(item["itunes:episodeType"]) || undefined,
             audioURL:
-              getAttrFromElement(item["enclosure"], prefix + "url") || null
+              getAttrFromElement(item["enclosure"], prefix + "url") || ""
           };
         }
       );
       return {
         entity: "feed",
-        description: getTextFromElement(feed.rss.channel["title"]) || null,
+        description: getTextFromElement(feed.rss.channel["title"]) || undefined,
         episodes
       };
     }

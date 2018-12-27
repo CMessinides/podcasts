@@ -1,7 +1,7 @@
 import createITunesService, { createITunesGateway } from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { readFileSync } from "fs";
-import { PodcastInputData, AuthorInputData } from "../stores/types";
+import { PodcastResponseData, AuthorResponseData } from "../store/types";
 import { ApplicationError } from "../types";
 
 const record = setupRecorder();
@@ -45,7 +45,7 @@ describe("iTunes Gateway", () => {
   it("should create a podcast from the iTunes track response", () => {
     const p = podcastResp.results[0];
     const received = createITunesGateway().read(p);
-    const expected: PodcastInputData = {
+    const expected: PodcastResponseData = {
       entity: "podcast",
       ID: p.collectionId,
       author: {
@@ -70,7 +70,7 @@ describe("iTunes Gateway", () => {
   it("should create an author from the iTunes artist response", () => {
     const a = authorResp.results[0];
     const received = createITunesGateway().read(a);
-    const expected: AuthorInputData = {
+    const expected: AuthorResponseData = {
       entity: "author",
       ID: a.artistId,
       name: a.artistName

@@ -1,10 +1,10 @@
 import {
   RSSService,
-  FeedInputData,
-  EpisodeInputData
-} from "../../stores/types";
+  FeedResponseData,
+  EpisodeReponseData
+} from "../../store/types";
 
-export const defaultMockEpisode: EpisodeInputData = {
+export const defaultMockEpisode: EpisodeReponseData = {
   entity: "episode",
   ID: "unique-guid",
   name: "Episode 1",
@@ -14,14 +14,14 @@ export const defaultMockEpisode: EpisodeInputData = {
   audioURL: "https://audio.podcast.com/episode1.mp3"
 };
 
-export const defaultMockFeed: FeedInputData = {
+export const defaultMockFeed: FeedResponseData = {
   entity: "feed",
   description: "This is our podcast",
   episodes: [defaultMockEpisode]
 };
 
-let getFeedOutput: FeedInputData = defaultMockFeed;
-export function setGetFeedOutput(output: FeedInputData) {
+let getFeedOutput: FeedResponseData = defaultMockFeed;
+export function setGetFeedOutput(output: FeedResponseData) {
   getFeedOutput = output;
 }
 

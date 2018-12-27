@@ -42,18 +42,6 @@ describe("RSS Gateway", () => {
         {
           input: createXML('<item><enclosure url="url" /></item>'),
           output: "url"
-        },
-        // Case 4: no <guid> or <enclosure> url, <itunes:episode> without attributes
-        {
-          input: createXML("<item><itunes:episode>ep</itunes:episode></item>"),
-          output: "ep"
-        },
-        // Case 5: no <guid> or <enclosure> url, <itunes:episode> with attributes
-        {
-          input: createXML(
-            '<item><itunes:episode attr="value">epWithAttr</itunes:episode></item>'
-          ),
-          output: "epWithAttr"
         }
       ];
 
@@ -68,16 +56,16 @@ describe("RSS Gateway", () => {
   it("should return a null feed if the XML is missing tags", () => {
     const expected = {
       entity: "feed",
-      description: null,
+      description: undefined,
       episodes: [
         {
           entity: "episode",
-          ID: null,
-          name: "Untitled",
-          description: null,
-          episode: null,
-          episodeType: null,
-          audioURL: null
+          ID: "",
+          name: undefined,
+          description: undefined,
+          episode: undefined,
+          episodeType: undefined,
+          audioURL: ""
         }
       ]
     };
