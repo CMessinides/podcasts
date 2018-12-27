@@ -6,7 +6,7 @@ import {
   FetchPodcastRequestedAction,
   FetchPodcastFailedAction,
   FetchPodcastSuccessfulAction
-} from "../../components/types";
+} from "../types";
 import { defaultMockPodcast } from "../../services/__mocks__/ITunesService";
 import { ApplicationError, Podcast } from "../../types";
 

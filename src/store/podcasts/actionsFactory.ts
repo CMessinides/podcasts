@@ -9,7 +9,7 @@ import {
   RSSService,
   PodcastResponseData,
   FeedResponseData
-} from "../types";
+} from "../../services/types";
 import {
   fetchPodcastRequested,
   fetchPodcastSucceeded,
@@ -26,7 +26,7 @@ import {
   FetchPodcast,
   SearchPodcasts,
   FetchFeed
-} from "../../components/types";
+} from "../types";
 
 function initPodcastData(data: PodcastResponseData): PodcastData {
   return {

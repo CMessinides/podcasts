@@ -5,7 +5,7 @@ import {
   PodcastResponseData,
   AuthorResponseData,
   NetworkService
-} from "../store/types";
+} from "./types";
 
 interface ITunesSearchParams extends ITunesParams {
   term: string;

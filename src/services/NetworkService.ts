@@ -1,5 +1,5 @@
 import { ApplicationError } from "../types";
-import { NetworkService } from "../store/types";
+import { NetworkService } from "./types";
 
 export const NETWORK_ERROR = "network/error";
 export const NETWORK_HTTP_RESPONSE_ERROR = "network/http-response-error";

@@ -1,7 +1,7 @@
 import createNetworkService from "../services/NetworkService";
 import createITunesService from "../services/ITunesService";
 import createRSSService from "../services/RSSService";
-import { ActionCreators } from "../components/types";
+import { ActionCreators } from "./types";
 import createPodcastActions from "./podcasts/actionsFactory";
 
 export default function createActions(

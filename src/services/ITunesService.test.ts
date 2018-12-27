@@ -1,7 +1,7 @@
 import createITunesService, { createITunesGateway } from "./ITunesService";
 import { setupRecorder } from "nock-record";
 import { readFileSync } from "fs";
-import { PodcastResponseData, AuthorResponseData } from "../store/types";
+import { PodcastResponseData, AuthorResponseData } from "./types";
 import { ApplicationError } from "../types";
 
 const record = setupRecorder();

@@ -3,7 +3,7 @@ import {
   fetchPodcastFailed,
   fetchPodcastSucceeded
 } from "./actionCreators";
-import { ActionStatuses, ActionTypes } from "../../components/types";
+import { ActionStatuses, ActionTypes } from "../types";
 import { ApplicationError, PodcastData } from "../../types";
 
 describe("fetchPodcastRequested", () => {

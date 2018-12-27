@@ -2,7 +2,7 @@ import {
   ITunesService,
   PodcastResponseData,
   AuthorResponseData
-} from "../../store/types";
+} from "../types";
 
 export const defaultMockPodcast: PodcastResponseData = {
   entity: "podcast",

@@ -11,7 +11,7 @@ import {
   FetchFeedRequestedAction,
   FetchFeedFailedAction,
   FetchFeedSuccessfulAction
-} from "../../components/types";
+} from "../types";
 
 export function fetchPodcastRequested(ID: number): FetchPodcastRequestedAction {
   return {

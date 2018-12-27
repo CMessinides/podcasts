@@ -1,8 +1,4 @@
-import {
-  RSSService,
-  FeedResponseData,
-  EpisodeReponseData
-} from "../../store/types";
+import { RSSService, FeedResponseData, EpisodeReponseData } from "../types";
 
 export const defaultMockEpisode: EpisodeReponseData = {
   entity: "episode",

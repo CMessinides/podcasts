@@ -13,7 +13,7 @@ import {
   Action,
   SearchPodcastsAction,
   FetchFeedAction
-} from "../../components/types";
+} from "../types";
 import { ApplicationError } from "../../types";
 
 type MockDispatch<A extends Action> = jest.Mock<ThunkDispatch<State, null, A>>;

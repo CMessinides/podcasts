@@ -6,7 +6,7 @@ import {
   isSuccessful,
   Action,
   PodcastState
-} from "../../components/types";
+} from "../types";
 
 function mergeFeed(podcastData: PodcastData, feed: Partial<Feed>): PodcastData {
   return {
