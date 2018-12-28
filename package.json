@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/enzyme": "^3.1.15",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/jest": "^23.3.9",
+    "@types/nock": "^9.3.0",
     "@types/node": "^10.12.9",
     "@types/react": "^16.7.6",
     "@types/react-dom": "^16.0.9",
+    "@types/react-redux": "^6.0.11",
     "fast-xml-parser": "^3.12.7",
     "mobx": "^5.6.0",
     "react": "^16.6.3",
@@ -33,6 +37,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
     "nock-record": "^0.3.3"
   }
 }

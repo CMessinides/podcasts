@@ -1,10 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import createActions from "./store/actionsFactory";
+import createNetworkService from "./services/NetworkService";
+import createITunesService from "./services/ITunesService";
+import createRSSService from "./services/RSSService";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const network = createNetworkService();
+const actions = createActions(
+  network,
+  createITunesService(network),
+  createRSSService(network)
+);
+
+ReactDOM.render(<App actions={actions} />, document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

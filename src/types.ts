@@ -13,10 +13,10 @@ interface CompleteEntity<D> extends BaseEntity {
   data: D;
 }
 
-type Entity<P, D extends P> = IncompleteEntity<P> | CompleteEntity<D>;
+// type Entity<P, D extends P> = IncompleteEntity<P> | CompleteEntity<D>;
 
 export function isComplete<P, D extends P>(
-  e: Entity<P, D>
+  e: IncompleteEntity<P> | CompleteEntity<D>
 ): e is CompleteEntity<D> {
   return typeof e.lastUpdated === "number";
 }
@@ -34,7 +34,9 @@ export interface PodcastData extends PodcastPartial {
   feed: Feed;
 }
 
-export type Podcast = Entity<PodcastPartial, PodcastData>;
+export type IncompletePodcast = IncompleteEntity<PodcastPartial>;
+export type CompletePodcast = CompleteEntity<PodcastData>;
+export type Podcast = IncompletePodcast | CompletePodcast;
 
 export interface AuthorPartial {
   ID: number;
@@ -43,7 +45,9 @@ export interface AuthorPartial {
 
 export interface AuthorData extends AuthorPartial {}
 
-export type Author = Entity<AuthorPartial, AuthorData>;
+export type IncompleteAuthor = IncompleteEntity<AuthorPartial>;
+export type CompleteAuthor = CompleteEntity<AuthorData>;
+export type Author = IncompleteAuthor | CompleteAuthor;
 
 export interface FeedPartial {
   URL: string;
@@ -54,7 +58,9 @@ export interface FeedData extends FeedPartial {
   episodes: Episode[];
 }
 
-export type Feed = Entity<FeedPartial, FeedData>;
+export type IncompleteFeed = IncompleteEntity<FeedPartial>;
+export type CompleteFeed = CompleteEntity<FeedData>;
+export type Feed = IncompleteFeed | CompleteFeed;
 
 export interface Episode {
   ID?: string;
@@ -78,7 +84,9 @@ export interface AudioPartial {
 
 export interface AudioData extends AudioPartial {}
 
-export type Audio = Entity<AudioPartial, AudioData>;
+export type IncompleteAudio = IncompleteEntity<AudioPartial>;
+export type CompleteAudio = CompleteEntity<AudioData>;
+export type Audio = IncompleteAudio | CompleteAudio;
 
 // Custom error types
 export interface ErrorData {
