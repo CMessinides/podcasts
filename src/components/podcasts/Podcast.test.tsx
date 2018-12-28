@@ -1,9 +1,8 @@
-import React from "react";
+import React, { Fragment } from "react";
 import createPodcastView, {
   PodcastView,
-  IncompletePodcastView,
   CompletePodcastView,
-  PodcastViewSwitch
+  GhostPodcastView
 } from "./Podcast";
 import {
   ActionCreators,
@@ -14,6 +13,7 @@ import {
   FetchPodcast
 } from "../../store/types";
 import { shallow } from "enzyme";
+import { ApplicationError } from "../../types";
 
 const dispatch = (a: any) => a;
 const getState = () => ({} as State);
@@ -56,48 +56,78 @@ describe("connected PodcastView", () => {
 });
 
 describe("PodcastView", () => {
-  // No tests until Enzyme supports Suspense!
-});
-
-describe("PodcastViewSwitch", () => {
   const ID = defaultPodcast.data.ID;
   const fetchPodcast = (ID: number) => {
     return mockActions.fetchPodcast(ID)(dispatch, getState, null);
   };
 
-  describe("when no podcast provided", () => {
-    const props = { ID, fetchPodcast };
-    it("should throw a promise", () => {
-      expect(() => {
-        shallow(<PodcastViewSwitch {...props} />);
-      }).toThrow(Promise);
+  describe("when podcast is complete", () => {
+    const props = {
+      fetchPodcast,
+      podcast: {
+        ...defaultPodcast,
+        // should show all the podcast data regardless of loading or error state
+        pending: true,
+        error: new ApplicationError()
+      }
+    };
+
+    it("should render a CompletePodcastView", () => {
+      const wrapper = shallow(<PodcastView {...props} />);
+      expect(wrapper.find(CompletePodcastView).exists()).toBe(true);
     });
   });
 
-  describe("when podcast is incomplete", () => {
+  describe("when podcast is pending", () => {
     const props = {
-      ID,
       fetchPodcast,
       podcast: {
+        // should show a loading state even if error is present
+        error: new ApplicationError(),
         pending: true,
         data: { ID }
       }
     };
-    it("should render an IncompletePodcastView", () => {
-      const wrapper = shallow(<PodcastViewSwitch {...props} />);
-      expect(wrapper.find(IncompletePodcastView).exists()).toBe(true);
+
+    it("should render a GhostPodcastView", () => {
+      const wrapper = shallow(<PodcastView {...props} />);
+      expect(wrapper.find(GhostPodcastView).exists()).toBe(true);
     });
   });
 
-  describe("when podcast is complete", () => {
+  describe("when podcast has an error", () => {
+    const error = new ApplicationError("name", "message");
     const props = {
-      ID,
       fetchPodcast,
-      podcast: defaultPodcast
+      podcast: {
+        error,
+        // should show error only if not loading
+        pending: false,
+        data: { ID }
+      }
     };
-    it("should render a CompletePodcastView", () => {
-      const wrapper = shallow(<PodcastViewSwitch {...props} />);
-      expect(wrapper.find(CompletePodcastView).exists()).toBe(true);
+
+    it("should render a div with error message", () => {
+      const wrapper = shallow(<PodcastView {...props} />);
+      const div = wrapper.find("div");
+
+      expect(div.exists()).toBe(true);
+      expect(div.text()).toBe(error.message);
+    });
+  });
+
+  describe("when a null podcast provided", () => {
+    const props = { podcast: { data: { ID } }, fetchPodcast };
+    it("should fetch the podcast", () => {
+      shallow(<PodcastView {...props} />);
+
+      expect(mockActions.fetchPodcast).toHaveBeenCalledWith(ID);
+    });
+
+    it("should render nothing", () => {
+      const wrapper = shallow(<PodcastView {...props} />);
+
+      expect(wrapper.children().length).toBe(0);
     });
   });
 });

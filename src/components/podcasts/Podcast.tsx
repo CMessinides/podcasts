@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Component, Suspense, Fragment } from "react";
 import {
   State,
   ActionCreators,
@@ -7,12 +7,7 @@ import {
 } from "../../store/types";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
-import {
-  Podcast,
-  isComplete,
-  IncompletePodcast,
-  CompletePodcast
-} from "../../types";
+import { Podcast, isComplete, CompletePodcast } from "../../types";
 
 type FetchPodcastFn = (ID: number) => Promise<FetchPodcastAction>;
 
@@ -20,13 +15,9 @@ interface ConnectedPodcastViewProps {
   ID: number;
 }
 
-interface PodcastViewProps extends ConnectedPodcastViewProps {
-  podcast?: Podcast;
+interface PodcastViewProps {
+  podcast: Podcast;
   fetchPodcast: FetchPodcastFn;
-}
-
-interface IncompletePodcastViewProps {
-  podcast: IncompletePodcast;
 }
 
 interface CompletePodcastViewProps {
@@ -35,14 +26,6 @@ interface CompletePodcastViewProps {
 
 export function GhostPodcastView() {
   return <div>Podcast loading...</div>;
-}
-
-export function IncompletePodcastView({ podcast }: IncompletePodcastViewProps) {
-  if (podcast.error) {
-    return <div>{podcast.error.message}</div>;
-  }
-
-  return <GhostPodcastView />;
 }
 
 export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
@@ -54,32 +37,46 @@ export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
   );
 }
 
-export function PodcastViewSwitch({
-  ID,
-  podcast,
-  fetchPodcast
-}: PodcastViewProps) {
-  if (podcast === undefined) {
-    throw fetchPodcast(ID);
-  } else if (isComplete(podcast)) {
-    return <CompletePodcastView podcast={podcast} />;
-  } else {
-    return <IncompletePodcastView podcast={podcast} />;
+export class PodcastView extends Component<PodcastViewProps> {
+  constructor(props: PodcastViewProps) {
+    super(props);
   }
-}
 
-export function PodcastView(props: PodcastViewProps) {
-  return (
-    <Suspense fallback={<GhostPodcastView />}>
-      <PodcastViewSwitch {...props} />
-    </Suspense>
-  );
+  shouldComponentUpdate({ podcast: nextPodcast }: Readonly<PodcastViewProps>) {
+    if (nextPodcast.pending !== this.props.podcast.pending) {
+      return true;
+    }
+
+    if (nextPodcast.error !== this.props.podcast.error) {
+      return true;
+    }
+
+    if (nextPodcast.lastUpdated !== this.props.podcast.lastUpdated) {
+      return true;
+    }
+
+    return false;
+  }
+
+  render() {
+    const podcast = this.props.podcast;
+    if (isComplete(podcast)) {
+      return <CompletePodcastView podcast={podcast} />;
+    } else if (podcast.pending === true) {
+      return <GhostPodcastView />;
+    } else if (podcast.error) {
+      return <div>{podcast.error.message}</div>;
+    } else {
+      this.props.fetchPodcast(podcast.data.ID);
+      return <Fragment />;
+    }
+  }
 }
 
 export default function createPodcastView(actions: ActionCreators) {
   const mapStateToProps = (state: State, { ID }: ConnectedPodcastViewProps) => {
     return {
-      podcast: state.podcasts[ID]
+      podcast: state.podcasts[ID] || { data: { ID } }
     };
   };
 
