@@ -1,9 +1,6 @@
 import React from "react";
-import createPodcastView, {
-  PodcastView,
-  CompletePodcastView,
-  GhostPodcastView
-} from "./PodcastView";
+import PodcastView, { PodcastViewBase, PodcastHeader } from "./PodcastView";
+import PodcastEpisodesList from "./PodcastEpisodesList";
 import {
   ActionCreators,
   FetchPodcastAction,
@@ -47,15 +44,13 @@ const mockActions: ActionCreators = {
   fetchFeed: jest.fn(() => () => Promise.resolve({} as FetchFeedAction))
 };
 
-describe("connected PodcastView", () => {
+describe("PodcastView", () => {
   it("should render without throwing", () => {
-    const PodcastView = createPodcastView(mockActions);
-
     expect(() => shallow(<PodcastView ID={1} />)).not.toThrow();
   });
 });
 
-describe("PodcastView", () => {
+describe("PodcastViewBase", () => {
   const ID = defaultPodcast.data.ID;
   const fetchPodcast = (ID: number) => {
     return mockActions.fetchPodcast(ID)(dispatch, getState, null);
@@ -72,9 +67,20 @@ describe("PodcastView", () => {
       }
     };
 
-    it("should render a CompletePodcastView", () => {
-      const wrapper = shallow(<PodcastView {...props} />);
-      expect(wrapper.find(CompletePodcastView).exists()).toBe(true);
+    it("should render a PodcastHeader with the podcast", () => {
+      const header = shallow(<PodcastViewBase {...props} />).find(
+        PodcastHeader
+      );
+      expect(header.exists()).toBe(true);
+      expect(header.prop("podcast")).toBe(props.podcast);
+    });
+
+    it("should render a PodcastEpisodeList with the podcast ID", () => {
+      const list = shallow(<PodcastViewBase {...props} />).find(
+        PodcastEpisodesList
+      );
+      expect(list.exists()).toBe(true);
+      expect(list.prop("podcastID")).toBe(props.podcast.data.ID);
     });
   });
 
@@ -89,9 +95,19 @@ describe("PodcastView", () => {
       }
     };
 
-    it("should render a GhostPodcastView", () => {
-      const wrapper = shallow(<PodcastView {...props} />);
-      expect(wrapper.find(GhostPodcastView).exists()).toBe(true);
+    it("should render a defualt PodcastHeader", () => {
+      const header = shallow(<PodcastViewBase {...props} />).find(
+        PodcastHeader
+      );
+      expect(header.exists()).toBe(true);
+      expect(header.prop("podcast")).toBe(undefined);
+    });
+
+    it("should not render a PodcastEpisodesList", () => {
+      const list = shallow(<PodcastViewBase {...props} />).find(
+        PodcastEpisodesList
+      );
+      expect(list.exists()).toBe(false);
     });
   });
 
@@ -108,7 +124,7 @@ describe("PodcastView", () => {
     };
 
     it("should render a div with error message", () => {
-      const wrapper = shallow(<PodcastView {...props} />);
+      const wrapper = shallow(<PodcastViewBase {...props} />);
       const div = wrapper.find("div");
 
       expect(div.exists()).toBe(true);
@@ -119,13 +135,13 @@ describe("PodcastView", () => {
   describe("when a null podcast provided", () => {
     const props = { podcast: { data: { ID } }, fetchPodcast };
     it("should fetch the podcast", () => {
-      shallow(<PodcastView {...props} />);
+      shallow(<PodcastViewBase {...props} />);
 
       expect(mockActions.fetchPodcast).toHaveBeenCalledWith(ID);
     });
 
     it("should render nothing", () => {
-      const wrapper = shallow(<PodcastView {...props} />);
+      const wrapper = shallow(<PodcastViewBase {...props} />);
 
       expect(wrapper.children().length).toBe(0);
     });

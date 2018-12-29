@@ -1,100 +1,101 @@
 import React, { Component } from "react";
-import {
-  State,
-  ActionCreators,
-  Action,
-  FetchPodcastAction
-} from "../../store/types";
+import { State, Action, FetchPodcastAction } from "../../store/types";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { Podcast, isComplete, CompletePodcast } from "../../types";
 import Ghost from "../generic/Ghost";
+import actions from "../actions";
+import PodcastEpisodesList from "./PodcastEpisodesList";
 
-type FetchPodcastFn = (ID: number) => Promise<FetchPodcastAction>;
-
-interface ConnectedPodcastViewProps {
-  ID: number;
-}
-
-interface PodcastViewProps {
+interface PodcastViewBaseProps {
   podcast: Podcast;
-  fetchPodcast: FetchPodcastFn;
+  fetchPodcast(ID: number): Promise<FetchPodcastAction>;
 }
 
-interface CompletePodcastViewProps {
-  podcast: CompletePodcast;
+export function PodcastHeader({ podcast }: { podcast?: CompletePodcast }) {
+  if (podcast) {
+    return (
+      <div>
+        <h2>{podcast.data.name}</h2>
+        <p>{podcast.data.author.name}</p>
+      </div>
+    );
+  } else {
+    return (
+      <Ghost>
+        <div>Podcast loading...</div>
+      </Ghost>
+    );
+  }
 }
 
-export function GhostPodcastView() {
-  return (
-    <Ghost>
-      <div>Podcast loading...</div>
-    </Ghost>
-  );
-}
-
-export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
-  return (
-    <div>
-      <h2>{podcast.data.name}</h2>
-      <p>{podcast.data.author.name}</p>
-    </div>
-  );
-}
-
-export class PodcastView extends Component<PodcastViewProps> {
-  constructor(props: PodcastViewProps) {
+export class PodcastViewBase extends Component<PodcastViewBaseProps> {
+  constructor(props: PodcastViewBaseProps) {
     super(props);
+
+    this.fetchPodcastIfNeeded = this.fetchPodcastIfNeeded.bind(this);
   }
 
-  shouldComponentUpdate({ podcast: nextPodcast }: Readonly<PodcastViewProps>) {
-    if (nextPodcast.pending !== this.props.podcast.pending) {
-      return true;
+  fetchPodcastIfNeeded() {
+    if (this.props.podcast.pending === undefined) {
+      this.props.fetchPodcast(this.props.podcast.data.ID);
     }
+  }
 
-    if (nextPodcast.error !== this.props.podcast.error) {
-      return true;
-    }
+  shouldComponentUpdate({ podcast: next }: Readonly<PodcastViewBaseProps>) {
+    const prev = this.props.podcast;
+    return (
+      next.pending !== prev.pending ||
+      next.error !== prev.error ||
+      next.lastUpdated !== prev.lastUpdated ||
+      false
+    );
+  }
 
-    if (nextPodcast.lastUpdated !== this.props.podcast.lastUpdated) {
-      return true;
-    }
+  componentDidMount() {
+    this.fetchPodcastIfNeeded();
+  }
 
-    return false;
+  componentDidUpdate() {
+    this.fetchPodcastIfNeeded();
   }
 
   render() {
     const podcast = this.props.podcast;
     if (isComplete(podcast)) {
-      return <CompletePodcastView podcast={podcast} />;
+      return (
+        <>
+          <PodcastHeader podcast={podcast} />
+          <PodcastEpisodesList podcastID={podcast.data.ID} />
+        </>
+      );
     } else if (podcast.pending === true) {
-      return <GhostPodcastView />;
+      return <PodcastHeader />;
     } else if (podcast.error) {
       return <div>{podcast.error.message}</div>;
     } else {
-      this.props.fetchPodcast(podcast.data.ID);
       return null;
     }
   }
 }
 
-export default function createPodcastView(actions: ActionCreators) {
-  const mapStateToProps = (state: State, { ID }: ConnectedPodcastViewProps) => {
-    return {
-      podcast: state.podcasts[ID] || { data: { ID } }
-    };
+const mapStateToProps = (state: State, { ID }: { ID: number }) => {
+  return {
+    podcast: state.podcasts[ID] || { data: { ID } }
   };
+};
 
-  const mapDispatchToProps = (dispatch: ThunkDispatch<State, null, Action>) => {
-    return {
-      fetchPodcast(ID: number) {
-        return dispatch(actions.fetchPodcast(ID));
-      }
-    };
+const mapDispatchToProps = (dispatch: ThunkDispatch<State, null, Action>) => {
+  return {
+    fetchPodcast(ID: number) {
+      return dispatch(actions.fetchPodcast(ID));
+    }
   };
+};
 
-  return connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PodcastView);
-}
+const PodcastView = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PodcastViewBase);
+
+export default PodcastView;
