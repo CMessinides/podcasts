@@ -2,31 +2,15 @@ import React, { Component } from "react";
 import { State, Action, FetchPodcastAction } from "../../store/types";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
-import { Podcast, isComplete, CompletePodcast } from "../../types";
-import LoadingState from "../core/LoadingState";
+import { Podcast, isComplete } from "../../types";
+import PodcastHeader from "./PodcastHeader";
 import actions from "../../store/actions";
 import PodcastEpisodesList from "./PodcastEpisodesList";
+import PodcastErrorState from "./PodcastErrorState";
 
 interface PodcastViewBaseProps {
   podcast: Podcast;
   fetchPodcast(ID: number): Promise<FetchPodcastAction>;
-}
-
-export function PodcastHeader({ podcast }: { podcast?: CompletePodcast }) {
-  if (podcast) {
-    return (
-      <div>
-        <h2>{podcast.data.name}</h2>
-        <p>{podcast.data.author.name}</p>
-      </div>
-    );
-  } else {
-    return (
-      <LoadingState>
-        <div>Podcast loading...</div>
-      </LoadingState>
-    );
-  }
 }
 
 export class PodcastViewBase extends Component<PodcastViewBaseProps> {
@@ -72,7 +56,7 @@ export class PodcastViewBase extends Component<PodcastViewBaseProps> {
     } else if (podcast.pending === true) {
       return <PodcastHeader />;
     } else if (podcast.error) {
-      return <div>{podcast.error.message}</div>;
+      return <PodcastErrorState />;
     } else {
       return null;
     }

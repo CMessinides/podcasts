@@ -1,5 +1,7 @@
 import React from "react";
-import PodcastView, { PodcastViewBase, PodcastHeader } from "./PodcastView";
+import PodcastView, { PodcastViewBase } from "./PodcastView";
+import PodcastErrorState from "./PodcastErrorState";
+import PodcastHeader from "./PodcastHeader";
 import PodcastEpisodesList from "./PodcastEpisodesList";
 import {
   ActionCreators,
@@ -112,7 +114,7 @@ describe("PodcastViewBase", () => {
   });
 
   describe("when podcast has an error", () => {
-    const error = new ApplicationError("name", "message");
+    const error = new ApplicationError();
     const props = {
       fetchPodcast,
       podcast: {
@@ -123,12 +125,12 @@ describe("PodcastViewBase", () => {
       }
     };
 
-    it("should render a div with error message", () => {
-      const wrapper = shallow(<PodcastViewBase {...props} />);
-      const div = wrapper.find("div");
+    it("should render a PodcastErrorState", () => {
+      const errorState = shallow(<PodcastViewBase {...props} />).find(
+        PodcastErrorState
+      );
 
-      expect(div.exists()).toBe(true);
-      expect(div.text()).toBe(error.message);
+      expect(errorState.exists()).toBe(true);
     });
   });
 
