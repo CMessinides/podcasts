@@ -8,6 +8,7 @@ import {
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { Podcast, isComplete, CompletePodcast } from "../../types";
+import Ghost from "../generic/Ghost";
 
 type FetchPodcastFn = (ID: number) => Promise<FetchPodcastAction>;
 
@@ -25,7 +26,11 @@ interface CompletePodcastViewProps {
 }
 
 export function GhostPodcastView() {
-  return <div>Podcast loading...</div>;
+  return (
+    <Ghost delay={2000}>
+      <div>Podcast loading...</div>
+    </Ghost>
+  );
 }
 
 export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
@@ -40,6 +45,10 @@ export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
 export class PodcastView extends Component<PodcastViewProps> {
   constructor(props: PodcastViewProps) {
     super(props);
+
+    if (this.props.podcast.pending === undefined) {
+      this.props.fetchPodcast(this.props.podcast.data.ID);
+    }
   }
 
   shouldComponentUpdate({ podcast: nextPodcast }: Readonly<PodcastViewProps>) {
@@ -67,8 +76,7 @@ export class PodcastView extends Component<PodcastViewProps> {
     } else if (podcast.error) {
       return <div>{podcast.error.message}</div>;
     } else {
-      this.props.fetchPodcast(podcast.data.ID);
-      return <Fragment />;
+      return null;
     }
   }
 }
