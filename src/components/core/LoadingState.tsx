@@ -1,16 +1,19 @@
 import { Component } from "react";
 
-interface GhostProps {
+interface LoadingStateProps {
   delay?: number;
 }
 
-interface GhostState {
+interface LoadingStateState {
   shouldFallback: boolean;
   timeoutID?: number;
 }
 
-export default class Ghost extends Component<GhostProps, GhostState> {
-  constructor(props: GhostProps) {
+export default class LoadingState extends Component<
+  LoadingStateProps,
+  LoadingStateState
+> {
+  constructor(props: LoadingStateProps) {
     super(props);
 
     this.state = {

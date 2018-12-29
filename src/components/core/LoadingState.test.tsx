@@ -1,5 +1,5 @@
 import React from "react";
-import Ghost from "./Ghost";
+import LoadingState from "./LoadingState";
 import { shallow, mount } from "enzyme";
 
 const defaultDelay = 1000;
@@ -15,18 +15,18 @@ beforeEach(() => {
 it("should render", () => {
   expect(() =>
     shallow(
-      <Ghost>
+      <LoadingState>
         <Child />
-      </Ghost>
+      </LoadingState>
     )
   ).not.toThrow();
 });
 
 it(`should render children after a delay (default ${defaultDelay}ms)`, () => {
   const wrapper = mount(
-    <Ghost>
+    <LoadingState>
       <Child />
-    </Ghost>
+    </LoadingState>
   );
 
   expect(wrapper.find("div").exists()).toBe(false);
@@ -40,9 +40,9 @@ it(`should render children after a delay (default ${defaultDelay}ms)`, () => {
 it("should allow a custom delay", () => {
   const customDelay = 3000;
   const wrapper = mount(
-    <Ghost delay={customDelay}>
+    <LoadingState delay={customDelay}>
       <Child />
-    </Ghost>
+    </LoadingState>
   );
 
   jest.runTimersToTime(defaultDelay);

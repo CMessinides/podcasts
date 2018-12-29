@@ -3,7 +3,7 @@ import { State, Action, FetchPodcastAction } from "../../store/types";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { Podcast, isComplete, CompletePodcast } from "../../types";
-import Ghost from "../generic/Ghost";
+import LoadingState from "../core/LoadingState";
 import actions from "../../store/actions";
 import PodcastEpisodesList from "./PodcastEpisodesList";
 
@@ -22,9 +22,9 @@ export function PodcastHeader({ podcast }: { podcast?: CompletePodcast }) {
     );
   } else {
     return (
-      <Ghost>
+      <LoadingState>
         <div>Podcast loading...</div>
-      </Ghost>
+      </LoadingState>
     );
   }
 }
