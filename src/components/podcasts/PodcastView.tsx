@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { Podcast, isComplete, CompletePodcast } from "../../types";
 import Ghost from "../generic/Ghost";
-import actions from "../actions";
+import actions from "../../store/actions";
 import PodcastEpisodesList from "./PodcastEpisodesList";
 
 interface PodcastViewBaseProps {

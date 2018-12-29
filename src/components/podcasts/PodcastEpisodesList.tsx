@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { State, Action, FetchFeedAction } from "../../store/types";
 import { ApplicationError, Episode, isComplete } from "../../types";
 import { ThunkDispatch } from "redux-thunk";
-import actions from "../actions";
+import actions from "../../store/actions";
 import { Component } from "react";
 
 interface BasePropsFromState {
