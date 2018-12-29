@@ -6,12 +6,15 @@ import { ApplicationError } from "../types";
 
 const record = setupRecorder();
 
-const podcastResp = JSON.parse(
-  readFileSync(__dirname + "/__fixtures__/podcast-list.json").toString()
-);
-const authorResp = JSON.parse(
-  readFileSync(__dirname + "/__fixtures__/author-list.json").toString()
-);
+const podcastJSON = readFileSync(
+  __dirname + "/__fixtures__/podcast-list.json"
+).toString();
+const authorJSON = readFileSync(
+  __dirname + "/__fixtures__/author-list.json"
+).toString();
+
+const podcastResp = JSON.parse(podcastJSON);
+const authorResp = JSON.parse(authorJSON);
 
 const defaultNetworkService = {
   async fetch(url: string) {
@@ -202,6 +205,38 @@ describe("iTunes Service", () => {
       await expect(itunes.getAuthorByID(1043703531)).rejects.toEqual(
         expect.any(ApplicationError)
       );
+    });
+
+    describe("podcast", () => {
+      it("should throw if ID matches an author", async () => {
+        expect.assertions(1);
+
+        const iTunes = createITunesService({
+          async fetch() {
+            return await Promise.resolve(new Response(authorJSON));
+          }
+        });
+
+        await expect(iTunes.getPodcastByID(1)).rejects.toEqual(
+          expect.any(ApplicationError)
+        );
+      });
+    });
+
+    describe("author", () => {
+      it("should throw if ID matches a podcast", async () => {
+        expect.assertions(1);
+
+        const iTunes = createITunesService({
+          async fetch() {
+            return await Promise.resolve(new Response(podcastJSON));
+          }
+        });
+
+        await expect(iTunes.getAuthorByID(1)).rejects.toEqual(
+          expect.any(ApplicationError)
+        );
+      });
     });
   });
 });

@@ -31,7 +31,7 @@ interface ITunesResponse {
 }
 
 interface ITunesTrack {
-  wrapperType: string;
+  wrapperType: "track";
   kind: string;
   artistId?: number;
   collectionId: number;
@@ -68,7 +68,7 @@ interface ITunesTrack {
 }
 
 interface ITunesArtist {
-  wrapperType: string;
+  wrapperType: "artist";
   artistType: string;
   artistName: string;
   artistLinkUrl: string;
@@ -80,6 +80,9 @@ interface ITunesArtist {
 type ITunesEntity = ITunesArtist | ITunesTrack;
 function isTrack(entity: ITunesEntity): entity is ITunesTrack {
   return entity.wrapperType === "track";
+}
+function isArtist(entity: ITunesEntity): entity is ITunesArtist {
+  return entity.wrapperType === "artist";
 }
 
 interface ITunesGateway {
@@ -207,13 +210,15 @@ export default function createITunesService(
         { id: ID },
         network
       )) as ITunesResponse;
-      if (parsed.resultCount === 0)
+      if (parsed.results.length === 0 || !isTrack(parsed.results[0])) {
         throw new ApplicationError(
           "Podcast not found",
           "ITunes Service could not find any podcast matching the given ID: " +
             ID,
           ITunesErrors.PODCAST_NOT_FOUND
         );
+      }
+
       return gateway.read(parsed.results[0]) as PodcastResponseData;
     },
 
@@ -223,7 +228,7 @@ export default function createITunesService(
         { id: ID },
         network
       )) as ITunesResponse;
-      if (parsed.resultCount === 0)
+      if (parsed.results.length === 0 || !isArtist(parsed.results[0]))
         throw new ApplicationError(
           "Author not found",
           "ITunes Service could not find any author matching the given ID: " +
