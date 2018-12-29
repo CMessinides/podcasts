@@ -1,9 +1,9 @@
-import React, { Fragment } from "react";
+import React from "react";
 import createPodcastView, {
   PodcastView,
   CompletePodcastView,
   GhostPodcastView
-} from "./Podcast";
+} from "./PodcastView";
 import {
   ActionCreators,
   FetchPodcastAction,

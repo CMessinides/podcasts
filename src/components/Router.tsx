@@ -1,6 +1,6 @@
 import React from "react";
 import { ActionCreators } from "../store/types";
-import createPodcastView from "./podcasts/Podcast";
+import createPodcastView from "./podcasts/PodcastView";
 import { Router as ReachRouter, RouteComponentProps } from "@reach/router";
 
 export default function createRouter(actions: ActionCreators) {

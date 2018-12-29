@@ -1,4 +1,4 @@
-import React, { Component, Suspense, Fragment } from "react";
+import React, { Component } from "react";
 import {
   State,
   ActionCreators,
@@ -27,7 +27,7 @@ interface CompletePodcastViewProps {
 
 export function GhostPodcastView() {
   return (
-    <Ghost delay={2000}>
+    <Ghost>
       <div>Podcast loading...</div>
     </Ghost>
   );
