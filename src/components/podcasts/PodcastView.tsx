@@ -45,10 +45,6 @@ export function CompletePodcastView({ podcast }: CompletePodcastViewProps) {
 export class PodcastView extends Component<PodcastViewProps> {
   constructor(props: PodcastViewProps) {
     super(props);
-
-    if (this.props.podcast.pending === undefined) {
-      this.props.fetchPodcast(this.props.podcast.data.ID);
-    }
   }
 
   shouldComponentUpdate({ podcast: nextPodcast }: Readonly<PodcastViewProps>) {
@@ -76,6 +72,7 @@ export class PodcastView extends Component<PodcastViewProps> {
     } else if (podcast.error) {
       return <div>{podcast.error.message}</div>;
     } else {
+      this.props.fetchPodcast(podcast.data.ID);
       return null;
     }
   }
