@@ -1,16 +1,21 @@
 import React from "react";
+import ERROR_MESSAGES, { ErrorCodes } from "../../strings/errorMessages";
+
+interface ErrorStateProps {
+  title?: string;
+  details?: string;
+}
+
+const defaultMessage = ERROR_MESSAGES[ErrorCodes.DEFAULT];
 
 export default function ErrorState({
-  title = "Whoops!",
-  detail = "We ran into an unexpected error. Please try reloading the page."
-}: {
-  title?: string;
-  detail?: string;
-}) {
+  title = defaultMessage.title,
+  details = defaultMessage.details
+}: ErrorStateProps = {}) {
   return (
     <>
       <h1>{title}</h1>
-      <p>{detail}</p>
+      <p>{details}</p>
     </>
   );
 }
