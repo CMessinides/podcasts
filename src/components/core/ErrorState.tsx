@@ -1,12 +1,12 @@
 import React from "react";
-import ERROR_MESSAGES, { ErrorCodes } from "../../strings/errorMessages";
+import errorMsg from "../../tokens/errorMsg";
 
 interface ErrorStateProps {
   title?: string;
   details?: string;
 }
 
-const defaultMessage = ERROR_MESSAGES[ErrorCodes.DEFAULT];
+const defaultMessage = errorMsg();
 
 export default function ErrorState({
   title = defaultMessage.title,

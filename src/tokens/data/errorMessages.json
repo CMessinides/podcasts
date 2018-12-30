@@ -1,0 +1,10 @@
+{
+    "DEFAULT": {
+        "title": "Error",
+        "details": "We ran into an unexpected error. Please try reloading the page."
+    },
+    "PODCAST_NOT_FOUND": {
+        "title": "Podcast Not Found",
+        "details": "We couldn't find the podcast you were looking for."
+    }
+}
