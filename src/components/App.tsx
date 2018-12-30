@@ -5,6 +5,8 @@ import { Provider } from "react-redux";
 import podcastApp from "../store/reducers";
 import thunkMiddleware from "redux-thunk";
 import Router from "./Router";
+import { ThemeProvider } from "../styles/styled-components";
+import theme from "../styles/theme";
 
 const store: Store<State, Action> = createStore(
   podcastApp,
@@ -13,8 +15,10 @@ const store: Store<State, Action> = createStore(
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <Router />
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <Router />
+      </Provider>
+    </ThemeProvider>
   );
 }
