@@ -29,7 +29,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "preflight": "node ./scripts/preflight.js"
   },
   "babelMacros": {
     "styledComponents": {
@@ -46,6 +47,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "dotenv": "^6.2.0",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "nock-record": "^0.3.3"
