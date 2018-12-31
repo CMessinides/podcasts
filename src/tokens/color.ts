@@ -10,7 +10,7 @@ type ColorMap = {
   }
 };
 
-type ColorName = "grey" | "brand";
+type ColorName = "grey" | "brand" | "success";
 type ColorLevel = "lighter" | "light" | "default" | "dark" | "darker" | "text";
 
 export function rgba(r: number, g: number, b: number, a: number) {
