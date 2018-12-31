@@ -1,17 +1,23 @@
 import colors from "./data/colors.json";
 
-type ColorMap = {
-  [c in ColorName]: {
-    [l in ColorLevel]: {
-      r: number;
-      g: number;
-      b: number;
-    }
-  }
+export type ColorMap = { [c in ColorName]: ColorScale };
+
+export type ColorScale = { [l in ColorLevel]: Color };
+
+export type Color = {
+  r: number;
+  g: number;
+  b: number;
 };
 
-type ColorName = "grey" | "brand" | "success" | "warning" | "error";
-type ColorLevel = "lighter" | "light" | "default" | "dark" | "darker" | "text";
+export type ColorName = "grey" | "brand" | "success" | "warning" | "error";
+export type ColorLevel =
+  | "lighter"
+  | "light"
+  | "default"
+  | "dark"
+  | "darker"
+  | "text";
 
 export function rgba(r: number, g: number, b: number, a: number) {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
