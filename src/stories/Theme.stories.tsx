@@ -3,7 +3,10 @@ import { storiesOf } from "@storybook/react";
 import rgba from "../styles/utils/rgba";
 import colors from "../tokens/colors.json";
 import styled from "../styles/styled-components";
-import { ColorScale, ColorLevel, ColorMap, ColorName } from "../tokens/types";
+
+type ColorMap = { [c: string]: ColorScale };
+type ColorScale = { [l: string]: Color };
+type Color = [number, number, number];
 
 const ColorGrid = styled.div`
   display: grid;
@@ -37,11 +40,10 @@ function ColorScaleView({ name, scale }: { name: string; scale: ColorScale }) {
       <h2>{capitalize(name)}</h2>
       <ColorStack>
         {Object.keys(scale).map(key => {
-          const { r, g, b } = scale[key as ColorLevel];
-          const bg = rgba(r, g, b, 1);
+          const bg = rgba(...(scale[key] as Color));
           const fg =
             key === "light" || key === "lighter"
-              ? rgba(scale.text.r, scale.text.g, scale.text.b, 1)
+              ? rgba(...scale.text)
               : rgba(255, 255, 255);
           return (
             <ColorItem {...{ key, bg, fg }}>
@@ -54,11 +56,11 @@ function ColorScaleView({ name, scale }: { name: string; scale: ColorScale }) {
   );
 }
 
-function ThemeColors({ colors }: { colors: ColorMap }) {
+function ThemeColors() {
   return (
     <ColorGrid>
       {Object.keys(colors).map(key => {
-        const scale = colors[key as ColorName];
+        const scale = ((colors as unknown) as ColorMap)[key];
         return <ColorScaleView {...{ key, name: key, scale }} />;
       })}
     </ColorGrid>
@@ -70,4 +72,4 @@ function capitalize(s: string): string {
   return first.toUpperCase() + rest.join("");
 }
 
-storiesOf("Theme", module).add("colors", () => <ThemeColors colors={colors} />);
+storiesOf("Theme", module).add("colors", () => <ThemeColors />);

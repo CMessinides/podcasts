@@ -163,11 +163,7 @@ function toColorScaleMap(scale) {
 
       return {
         name: name.toLowerCase(),
-        color: {
-          r: fill.color.r * 255,
-          g: fill.color.g * 255,
-          b: fill.color.b * 255
-        }
+        color: [fill.color.r * 255, fill.color.g * 255, fill.color.b * 255]
       };
     })
     .reduce((acc, current) => {
@@ -191,7 +187,7 @@ function logColor(name, scale) {
     )}`
   );
   levels.forEach((level, i) => {
-    const { r, g, b } = scale[level];
+    const [r, g, b] = scale[level];
     logger.log(
       `${chalk.dim(i === levels.length - 1 ? "└─" : "├─")} ${chalk.rgb(r, g, b)(
         "████"
