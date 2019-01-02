@@ -4,7 +4,8 @@ import {
   ITunesParams,
   PodcastResponseData,
   AuthorResponseData,
-  NetworkService
+  NetworkService,
+  ITunesServiceFactoryOpts
 } from "./types";
 
 interface ITunesSearchParams extends ITunesParams {
@@ -109,9 +110,12 @@ function createQueryString(params: { [key: string]: any }): string {
 async function getParsedResponse(
   endpoint: string,
   params: { [key: string]: any },
-  network: NetworkService
+  network: NetworkService,
+  proxy = false
 ): Promise<any> {
-  const response = await network.fetch(endpoint + createQueryString(params));
+  const response = await network.fetch(endpoint + createQueryString(params), {
+    proxy
+  });
   try {
     return await response.json();
   } catch (error) {
@@ -164,8 +168,11 @@ export function createITunesGateway(): ITunesGateway {
 
 export default function createITunesService(
   network: NetworkService,
-  searchEndpoint = "https://itunes.apple.com/search",
-  lookupEndpoint = "https://itunes.apple.com/lookup"
+  {
+    searchEndpoint = "https://itunes.apple.com/search",
+    lookupEndpoint = "https://itunes.apple.com/lookup",
+    proxy = false
+  }: ITunesServiceFactoryOpts = {}
 ): ITunesService {
   const gateway = createITunesGateway();
   return {
@@ -181,7 +188,8 @@ export default function createITunesService(
       const parsed = (await getParsedResponse(
         searchEndpoint,
         queryParams,
-        network
+        network,
+        proxy
       )) as ITunesResponse;
       return parsed.results.map(r => gateway.read(r) as PodcastResponseData);
     },
@@ -199,7 +207,8 @@ export default function createITunesService(
       const parsed = (await getParsedResponse(
         searchEndpoint,
         queryParams,
-        network
+        network,
+        proxy
       )) as ITunesResponse;
       return parsed.results.map(r => gateway.read(r) as AuthorResponseData);
     },
@@ -208,7 +217,8 @@ export default function createITunesService(
       const parsed = (await getParsedResponse(
         lookupEndpoint,
         { id: ID },
-        network
+        network,
+        proxy
       )) as ITunesResponse;
       if (parsed.results.length === 0 || !isTrack(parsed.results[0])) {
         throw new ApplicationError(
@@ -226,7 +236,8 @@ export default function createITunesService(
       const parsed = (await getParsedResponse(
         lookupEndpoint,
         { id: ID },
-        network
+        network,
+        proxy
       )) as ITunesResponse;
       if (parsed.results.length === 0 || !isArtist(parsed.results[0]))
         throw new ApplicationError(

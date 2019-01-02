@@ -4,7 +4,8 @@ import {
   RSSService,
   FeedResponseData,
   EpisodeReponseData,
-  NetworkService
+  NetworkService,
+  RSSServiceFactoryOpts
 } from "./types";
 
 export const RSS_ERROR = "rss/error";
@@ -127,10 +128,13 @@ export function createRSSGateway(
   };
 }
 
-export default function createRSSService(network: NetworkService): RSSService {
+export default function createRSSService(
+  network: NetworkService,
+  { proxy = false }: RSSServiceFactoryOpts = {}
+): RSSService {
   return {
     async getFeed(url: string) {
-      const response = await network.fetch(url);
+      const response = await network.fetch(url, { proxy });
 
       try {
         var xml = await response.text();

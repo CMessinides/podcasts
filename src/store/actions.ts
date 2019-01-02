@@ -6,6 +6,6 @@ import createRSSService from "../services/RSSService";
 const network = createNetworkService();
 export default createActions(
   network,
-  createITunesService(network),
-  createRSSService(network)
+  createITunesService(network, { proxy: true }),
+  createRSSService(network, { proxy: true })
 );

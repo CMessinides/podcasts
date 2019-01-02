@@ -1,10 +1,18 @@
 // Network service interfaces
 export interface NetworkService {
-  fetch(url: string): Promise<Response>;
+  fetch(url: string, opts?: { proxy?: boolean }): Promise<Response>;
 }
 
+export type NetworkServiceFactoryOpts = {
+  proxyEndpoint?: string;
+  proxyKey?: string;
+};
+
 export interface NetworkServiceFactory {
-  (fetch: GlobalFetch["fetch"]): NetworkService;
+  (
+    fetch: GlobalFetch["fetch"],
+    opts?: NetworkServiceFactoryOpts
+  ): NetworkService;
 }
 
 // ITunes service interfaces
@@ -26,12 +34,14 @@ export interface ITunesService {
   getAuthorByID(id: number): Promise<AuthorResponseData>;
 }
 
+export type ITunesServiceFactoryOpts = {
+  searchEndpoint?: string;
+  lookupEndpoint?: string;
+  proxy?: boolean;
+};
+
 export interface ITunesServiceFactory {
-  (
-    network: NetworkService,
-    searchEndpoint?: string,
-    lookupEndpoint?: string
-  ): ITunesService;
+  (network: NetworkService, opts?: ITunesServiceFactoryOpts): ITunesService;
 }
 
 // RSS service interfaces
@@ -39,8 +49,12 @@ export interface RSSService {
   getFeed(url: string): Promise<FeedResponseData>;
 }
 
+export type RSSServiceFactoryOpts = {
+  proxy?: boolean;
+};
+
 export interface RSSServiceFactory {
-  (network: NetworkService): RSSService;
+  (network: NetworkService, opts?: RSSServiceFactoryOpts): RSSService;
 }
 
 // Entity input interfaces
