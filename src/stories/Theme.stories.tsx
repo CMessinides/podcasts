@@ -1,14 +1,9 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
-import color, {
-  rgba,
-  ColorMap,
-  ColorName,
-  ColorLevel,
-  ColorScale
-} from "../tokens/color";
-import colors from "../tokens/data/colors.json";
+import rgba from "../styles/utils/rgba";
+import colors from "../tokens/colors.json";
 import styled from "../styles/styled-components";
+import { ColorScale, ColorLevel, ColorMap, ColorName } from "../tokens/types";
 
 const ColorGrid = styled.div`
   display: grid;
@@ -22,7 +17,7 @@ const ColorStack = styled.ul`
   padding: 0;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 4px 10px 0 ${color("black", { alpha: 0.12 })};
+  box-shadow: 0 4px 10px 0 ${rgba(0, 0, 0, 0.12)};
 `;
 
 interface SwatchProps {
@@ -47,7 +42,7 @@ function ColorScaleView({ name, scale }: { name: string; scale: ColorScale }) {
           const fg =
             key === "light" || key === "lighter"
               ? rgba(scale.text.r, scale.text.g, scale.text.b, 1)
-              : color("white");
+              : rgba(255, 255, 255);
           return (
             <ColorItem {...{ key, bg, fg }}>
               {capitalize(name)} ({capitalize(key)})

@@ -1,8 +1,8 @@
 import React from "react";
 import ErrorState from "../core/ErrorState";
-import errorMsg from "../../tokens/errorMsg";
+import errorMsgs from "../../tokens/errorMessages.json";
 
 export default function PodcastErrorState() {
-  const error = errorMsg("PODCAST_NOT_FOUND");
+  const error = errorMsgs.PODCAST_NOT_FOUND;
   return <ErrorState {...error} />;
 }

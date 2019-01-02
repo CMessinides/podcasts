@@ -87,7 +87,7 @@ function parseResponseData(data) {
   });
   const colorMap = toColorMap(JSON.parse(data));
 
-  const dest = path.resolve(__dirname, "../src/tokens/data/colors.json");
+  const dest = path.resolve(__dirname, "../src/tokens/colors.json");
   fs.writeFileSync(dest, JSON.stringify(colorMap, null, 4));
   logger.alwaysLog("Color tokens saved to " + log.emph(dest));
 }

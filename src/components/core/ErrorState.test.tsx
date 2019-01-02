@@ -1,10 +1,10 @@
 import React from "react";
 import ErrorState from "./ErrorState";
 import { shallow } from "enzyme";
-import errorMsg from "../../tokens/errorMsg";
+import errorMsgs from "../../tokens/errorMessages.json";
 
 it("renders a default error message", () => {
-  const { title, details } = errorMsg();
+  const { title, details } = errorMsgs.DEFAULT;
   const wrapper = shallow(<ErrorState />);
   const heading = wrapper.find("h1");
   const detail = wrapper.find("p");
