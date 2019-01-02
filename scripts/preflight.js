@@ -1,6 +1,7 @@
 const path = require("path");
-const spawnScript = require("./utils/spawnScript").spawnScript;
+const { spawnScript } = require("./utils/spawn");
+const { ParentLogger } = require("./utils/log");
 
-const self = "preflight";
+const logger = new ParentLogger("preflight");
 
-spawnScript(path.resolve(__dirname, "getColors.js"), self);
+spawnScript(path.resolve(__dirname, "getColors.js"), logger);

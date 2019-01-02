@@ -87,7 +87,10 @@ function debug(thing, { prefix = "", level = 0, comma = false } = {}) {
 }
 
 class Logger {
-  constructor(verbose = false, debug = false) {
+  constructor(
+    verbose = process.argv.includes("--verbose"),
+    debug = process.argv.includes("--debug")
+  ) {
     this.__verbose = verbose || debug;
     this.__debug = debug;
   }
@@ -118,11 +121,76 @@ class Logger {
   }
 }
 
+function prefixOutput(pre, preColorFn, output) {
+  return dim("[") + preColorFn(pre) + dim("] ") + output.toString().trimRight();
+}
+
+function fmtChildOutput(childName, output, colorFn = info) {
+  return prefixOutput(childName, colorFn, output);
+}
+
+function fmtParentOutput(parentName, childName, output, colorFn = info) {
+  return prefixOutput(parentName, colorFn, `Task ${emph(childName)} ${output}`);
+}
+
+class ParentLogger {
+  constructor(name = "parent") {
+    this.name = name;
+  }
+  logStart(childName) {
+    console.log(fmtParentOutput(this.name, childName, "started"));
+  }
+
+  logStdout(childName, stdout) {
+    stdout
+      .toString()
+      .split("\n")
+      .forEach(line => {
+        if (line) {
+          console.log(fmtChildOutput(childName, line));
+        }
+      });
+  }
+
+  logStderr(childName, stderr) {
+    stderr
+      .toString()
+      .split("\n")
+      .forEach(line => {
+        if (line) {
+          console.error(fmtChildOutput(childName, line, error));
+        }
+      });
+  }
+
+  logError(childName, err) {
+    console.error(
+      fmtParentOutput(
+        this.name,
+        childName,
+        `encountered ${error("error")}:\n${err}`
+      )
+    );
+  }
+
+  logExit(childName, code) {
+    console.log(
+      fmtParentOutput(
+        this.name,
+        childName,
+        `exited with code ${emph(code)}`,
+        code === 0 ? success : error
+      )
+    );
+  }
+}
+
 module.exports = {
   error,
   success,
   info,
   dim,
   emph,
-  Logger
+  Logger,
+  ParentLogger
 };

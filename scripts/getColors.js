@@ -6,10 +6,7 @@ const chalk = require("chalk");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env.local") });
 
 const { Logger } = log;
-const logger = new Logger(
-  process.argv.includes("--verbose"),
-  process.argv.includes("--debug")
-);
+const logger = new Logger();
 
 const ENV = {
   FIGMA_ACCESS_TOKEN: null,
