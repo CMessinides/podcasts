@@ -19,8 +19,9 @@ const port = process.env.DEV_SERVER_PORT || 4000;
 
 function handler(req, res) {
   for (let i = 0; i < routes.length; i++) {
-    if (req.url.startsWith(routes[i])) {
-      return routeMap[i].handler(req, res);
+    const route = routes[i];
+    if (req.url.startsWith(route)) {
+      return routeMap[route].handler(req, res);
     }
   }
 
