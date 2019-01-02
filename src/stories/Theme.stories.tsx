@@ -40,7 +40,7 @@ function ColorScaleView({ name, scale }: { name: string; scale: ColorScale }) {
       <h2>{capitalize(name)}</h2>
       <ColorStack>
         {Object.keys(scale).map(key => {
-          const bg = rgba(...(scale[key] as Color));
+          const bg = rgba(...scale[key]);
           const fg =
             key === "light" || key === "lighter"
               ? rgba(...scale.text)
