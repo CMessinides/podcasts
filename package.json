@@ -33,6 +33,7 @@
     "preflight": "node ./scripts/preflight.js",
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
+  "proxy": "http://localhost:4000",
   "babelMacros": {
     "styledComponents": {
       "ssr": false
