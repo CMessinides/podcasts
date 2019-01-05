@@ -1,7 +1,7 @@
 import React from "react";
 import ErrorState from "./ErrorState";
 import { shallow } from "enzyme";
-import errorMsgs from "../../tokens/errorMessages.json";
+import errorMsgs from "../../tokens/data/errorMessages.json";
 
 it("renders a default error message", () => {
   const { title, details } = errorMsgs.DEFAULT;

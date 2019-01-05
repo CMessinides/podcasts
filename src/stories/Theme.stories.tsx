@@ -1,7 +1,7 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
 import rgba from "../styles/utils/rgba";
-import colors from "../tokens/colors.json";
+import colors from "../tokens/data/colors.json";
 import styled from "../styles/styled-components";
 
 type ColorMap = { [c: string]: ColorScale };

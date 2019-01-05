@@ -1,5 +1,5 @@
 import React from "react";
-import errorMsgs from "../../tokens/errorMessages.json";
+import errorMsgs from "../../tokens/data/errorMessages.json";
 
 interface ErrorStateProps {
   title?: string;

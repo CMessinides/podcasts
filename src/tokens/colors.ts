@@ -1,5 +1,5 @@
-import colorData from "./colors.json";
-import rgba from "../styles/utils/rgba.js";
+import colorData from "./data/colors.json";
+import rgba from "../styles/utils/rgba";
 
 type ColorLabel = "grey" | "brand" | "success" | "error" | "warning";
 type ColorLevel = "lighter" | "light" | "default" | "dark" | "darker" | "text";
@@ -16,9 +16,10 @@ const colors: ColorMap = Object.keys(colorData).reduce(
       ...acc,
       [<ColorLabel>label]: Object.keys(scale).reduce(
         (acc: Record<ColorLevel, string>, level) => {
+          const [r, g, b] = scale[<ColorLevel>level];
           return {
             ...acc,
-            [<ColorLevel>level]: rgba(...scale[<ColorLevel>level])
+            [<ColorLevel>level]: rgba(r, g, b)
           };
         },
         {} as Record<ColorLevel, string>
