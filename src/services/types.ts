@@ -70,10 +70,10 @@ export interface PodcastResponseData extends EntityInputData {
   explicit: boolean;
   feedURL: string;
   thumbnailURLs: {
-    x30: string;
-    x60: string;
-    x100: string;
-    x600: string;
+    30: string;
+    60: string;
+    100: string;
+    600: string;
   };
   author: {
     ID?: number;

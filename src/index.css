@@ -49,6 +49,16 @@ table {
 
 /* end reset */
 
+html {
+	box-sizing: border-box;
+}
+
+html *,
+html *::before,
+html *::after {
+	box-sizing: inherit;
+}
+
 body {
   margin: 0;
   padding: 0;

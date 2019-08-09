@@ -3,9 +3,7 @@ import { State, Action, FetchPodcastAction } from "../../store/types";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { Podcast, isComplete } from "../../types";
-import PodcastHeader from "./PodcastHeader";
 import actions from "../../store/actions";
-import PodcastEpisodesList from "./PodcastEpisodesList";
 import PodcastErrorState from "./PodcastErrorState";
 
 interface PodcastViewBaseProps {
@@ -26,16 +24,6 @@ export class PodcastViewBase extends Component<PodcastViewBaseProps> {
     }
   }
 
-  shouldComponentUpdate({ podcast: next }: Readonly<PodcastViewBaseProps>) {
-    const prev = this.props.podcast;
-    return (
-      next.pending !== prev.pending ||
-      next.error !== prev.error ||
-      next.lastUpdated !== prev.lastUpdated ||
-      false
-    );
-  }
-
   componentDidMount() {
     this.fetchPodcastIfNeeded();
   }
@@ -46,20 +34,22 @@ export class PodcastViewBase extends Component<PodcastViewBaseProps> {
 
   render() {
     const podcast = this.props.podcast;
+
     if (isComplete(podcast)) {
-      return (
-        <>
-          <PodcastHeader podcast={podcast} />
-          <PodcastEpisodesList podcastID={podcast.data.ID} />
-        </>
-      );
-    } else if (podcast.pending === true) {
-      return <PodcastHeader />;
-    } else if (podcast.error) {
-      return <PodcastErrorState />;
-    } else {
-      return null;
     }
+
+    // It's possible that a podcast both has an error and is pending,
+    // i.e. the user encountered the error on a previous attempt and
+    // is now retrying. In that case, we'll want to prefer the pending
+    // status and show a loading indicator.
+    if (!podcast.pending && podcast.error) {
+      return <PodcastErrorState />;
+    }
+
+    if (podcast.pending) {
+    }
+
+    return null;
   }
 }
 

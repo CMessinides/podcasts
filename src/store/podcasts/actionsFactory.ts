@@ -33,6 +33,7 @@ function initPodcastData(data: PodcastResponseData): PodcastData {
     ID: data.ID,
     name: data.name,
     author: data.author,
+    thumbnails: data.thumbnailURLs,
     feed: {
       data: { URL: data.feedURL }
     }

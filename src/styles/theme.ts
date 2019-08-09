@@ -1,16 +1,6 @@
-export interface ThemeInterface {
-  borderRadius: string;
-  spacing: {
-    xs: number;
-    sm: number;
-    md: number;
-    lg: number;
-    xl: number;
-    xxl: number;
-  };
-}
+export type ThemeInterface = typeof theme;
 
-const theme: ThemeInterface = {
+const theme = {
   borderRadius: "4px",
   spacing: {
     xs: 8,

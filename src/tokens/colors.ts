@@ -1,8 +1,8 @@
 import colorData from "./data/colors.json";
 import rgba from "../styles/utils/rgba";
 
-type ColorLabel = "grey" | "brand" | "success" | "error" | "warning";
-type ColorLevel = "lighter" | "light" | "default" | "dark" | "darker" | "text";
+type ColorLabel = keyof typeof colorData;
+type ColorLevel = keyof typeof colorData.grey;
 type ColorData = Record<
   ColorLabel,
   Record<ColorLevel, [number, number, number]>

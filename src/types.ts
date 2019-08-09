@@ -1,3 +1,6 @@
+type RequireOnly<T, K extends keyof T> = Pick<T, K> &
+  Partial<Pick<T, Exclude<keyof T, K>>>;
+
 interface BaseEntity {
   lastUpdated?: number;
   pending?: boolean;
@@ -13,50 +16,50 @@ interface CompleteEntity<D> extends BaseEntity {
   data: D;
 }
 
-// type Entity<P, D extends P> = IncompleteEntity<P> | CompleteEntity<D>;
-
 export function isComplete<P, D extends P>(
-  e: IncompleteEntity<P> | CompleteEntity<D>
+  e: IncompleteEntity<P> | CompleteEntity<D> | undefined
 ): e is CompleteEntity<D> {
+  if (typeof e === "undefined") return false;
   return typeof e.lastUpdated === "number";
 }
 
-export interface PodcastPartial {
+export interface PodcastData {
   ID: number;
-}
-
-export interface PodcastData extends PodcastPartial {
   name: string;
-  author: {
-    ID?: number;
-    name: string;
+  author: RequireOnly<AuthorData, "name">;
+  thumbnails: {
+    30: string;
+    60: string;
+    100: string;
+    600: string;
   };
   feed: Feed;
 }
+
+export type PodcastPartial = RequireOnly<PodcastData, "ID">;
 
 export type IncompletePodcast = IncompleteEntity<PodcastPartial>;
 export type CompletePodcast = CompleteEntity<PodcastData>;
 export type Podcast = IncompletePodcast | CompletePodcast;
 
-export interface AuthorPartial {
+export interface AuthorData {
   ID: number;
   name: string;
 }
 
-export interface AuthorData extends AuthorPartial {}
+export type AuthorPartial = RequireOnly<AuthorData, "ID">;
 
 export type IncompleteAuthor = IncompleteEntity<AuthorPartial>;
 export type CompleteAuthor = CompleteEntity<AuthorData>;
 export type Author = IncompleteAuthor | CompleteAuthor;
 
-export interface FeedPartial {
+export interface FeedData {
   URL: string;
-}
-
-export interface FeedData extends FeedPartial {
   description?: string;
   episodes: Episode[];
 }
+
+export type FeedPartial = RequireOnly<FeedData, "URL">;
 
 export type IncompleteFeed = IncompleteEntity<FeedPartial>;
 export type CompleteFeed = CompleteEntity<FeedData>;
@@ -74,15 +77,16 @@ export interface ValidEpisode extends Episode {
   audio: Audio;
 }
 
-export function isValidEpisode(e: Episode): e is ValidEpisode {
+export function isValidEpisode(e: Episode | undefined): e is ValidEpisode {
+  if (e === undefined) return false;
   return e.ID !== undefined && e.audio !== undefined;
 }
 
-export interface AudioPartial {
+export interface AudioData {
   URL: string;
 }
 
-export interface AudioData extends AudioPartial {}
+export type AudioPartial = Partial<AudioData>;
 
 export type IncompleteAudio = IncompleteEntity<AudioPartial>;
 export type CompleteAudio = CompleteEntity<AudioData>;

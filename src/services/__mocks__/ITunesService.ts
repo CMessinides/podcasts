@@ -16,10 +16,10 @@ export const defaultMockPodcast: PodcastResponseData = {
   explicit: false,
   feedURL: "https://feed.podcast.com/feed.rss",
   thumbnailURLs: {
-    x30: "https://image.podcast.com/thumb-30.jpg",
-    x60: "https://image.podcast.com/thumb-60.jpg",
-    x100: "https://image.podcast.com/thumb-100.jpg",
-    x600: "https://image.podcast.com/thumb-600.jpg"
+    30: "https://image.podcast.com/thumb-30.jpg",
+    60: "https://image.podcast.com/thumb-60.jpg",
+    100: "https://image.podcast.com/thumb-100.jpg",
+    600: "https://image.podcast.com/thumb-600.jpg"
   }
 };
 

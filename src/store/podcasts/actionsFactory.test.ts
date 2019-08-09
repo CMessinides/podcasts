@@ -22,6 +22,7 @@ const defaultPodcastData = {
   ID: defaultMockPodcast.ID,
   name: defaultMockPodcast.name,
   author: defaultMockPodcast.author,
+  thumbnails: defaultMockPodcast.thumbnailURLs,
   feed: {
     data: {
       URL: defaultMockPodcast.feedURL

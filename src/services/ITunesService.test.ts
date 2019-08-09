@@ -31,10 +31,10 @@ const anyPodcast = expect.objectContaining({
   censoredName: expect.any(String),
   explicit: expect.any(Boolean),
   thumbnailURLs: {
-    x30: expect.any(String),
-    x60: expect.any(String),
-    x100: expect.any(String),
-    x600: expect.any(String)
+    30: expect.any(String),
+    60: expect.any(String),
+    100: expect.any(String),
+    600: expect.any(String)
   }
 });
 
@@ -60,10 +60,10 @@ describe("iTunes Gateway", () => {
       explicit: p.collectionExplicitness === "explicit",
       feedURL: p.feedUrl,
       thumbnailURLs: {
-        x30: p.artworkUrl30,
-        x60: p.artworkUrl60,
-        x100: p.artworkUrl100,
-        x600: p.artworkUrl600
+        30: p.artworkUrl30,
+        60: p.artworkUrl60,
+        100: p.artworkUrl100,
+        600: p.artworkUrl600
       }
     };
 

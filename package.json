@@ -50,8 +50,11 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "@storybook/addon-knobs": "^4.1.4",
+    "@storybook/addon-viewport": "^4.1.4",
     "@storybook/react": "^4.1.4",
     "@types/storybook__react": "^4.0.0",
+    "@types/storybook__addon-knobs": "^4.0.0",
     "babel-loader": "^8.0.4",
     "dotenv": "^6.2.0",
     "enzyme": "^3.8.0",

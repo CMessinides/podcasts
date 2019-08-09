@@ -26,12 +26,12 @@ interface ITunesSearchParams extends ITunesParams {
   explicit: "yes" | "no";
 }
 
-interface ITunesResponse {
+export interface ITunesResponse {
   resultCount: number;
   results: ITunesEntity[];
 }
 
-interface ITunesTrack {
+export interface ITunesTrack {
   wrapperType: "track";
   kind: string;
   artistId?: number;
@@ -68,7 +68,7 @@ interface ITunesTrack {
   genres: string[];
 }
 
-interface ITunesArtist {
+export interface ITunesArtist {
   wrapperType: "artist";
   artistType: string;
   artistName: string;
@@ -142,10 +142,10 @@ function readPodcast(entity: ITunesTrack): PodcastResponseData {
     explicit: entity.collectionExplicitness === "explicit",
     feedURL: entity.feedUrl,
     thumbnailURLs: {
-      x30: entity.artworkUrl30,
-      x60: entity.artworkUrl60,
-      x100: entity.artworkUrl100,
-      x600: entity.artworkUrl600
+      30: entity.artworkUrl30,
+      60: entity.artworkUrl60,
+      100: entity.artworkUrl100,
+      600: entity.artworkUrl600
     }
   };
 }

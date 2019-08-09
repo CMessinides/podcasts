@@ -209,9 +209,9 @@ export interface ActionCreatorsFactory {
 }
 
 // State
-export interface PodcastState {
-  [ID: number]: Podcast;
-}
+export type PodcastState = {
+  [ID: number]: Podcast | undefined;
+};
 
 export interface State {
   podcasts: PodcastState;
